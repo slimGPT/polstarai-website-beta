@@ -1,0 +1,147 @@
+/**
+ * Polstar AI Theme Styles
+ * 
+ * Note: This theme uses Tailwind CSS classes. 
+ * You can either:
+ * 1. Compile Tailwind CSS and replace this file with the compiled output
+ * 2. Use Tailwind CSS CDN (for development)
+ * 3. Replace Tailwind classes with custom CSS
+ */
+
+/* Import Tailwind (for development - replace with compiled CSS in production) */
+@import url('https://cdn.jsdelivr.net/npm/tailwindcss@3/dist/tailwind.min.css');
+
+/* Custom animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUpBlur {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 1s ease-out forwards;
+    opacity: 0;
+}
+
+.fade-up-blur {
+    animation: fadeUpBlur 1.2s ease-out forwards;
+    opacity: 0;
+}
+
+.fade-up {
+    animation: fadeInUp 1s ease-out forwards;
+    opacity: 0;
+}
+
+.scale-in {
+    animation: scaleIn 1.1s ease-out forwards;
+    opacity: 0;
+}
+
+/* Polstar Theme Base Styles */
+body.polstar-theme {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+}
+
+/* Hero Widget Column Styles */
+.hero-widget-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
+
+@media (max-width: 640px) {
+    .hero-widget-column {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* Utility Classes */
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
