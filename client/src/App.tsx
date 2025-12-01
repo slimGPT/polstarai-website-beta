@@ -10,6 +10,7 @@ import AgentFinsight from "./pages/AgentFinsight";
 import AgentLinda from "./pages/AgentLinda";
 import AgentSamybear from "./pages/AgentSamybear";
 import SamyBearHome from "./pages/SamyBearHome";
+import ElevenLabsWidget from "./components/ElevenLabsWidget";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          <ElevenLabsWidget />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

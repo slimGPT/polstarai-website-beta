@@ -32,10 +32,10 @@ export default function HeroSection() {
       <HeroStarField />
       
       {/* Dark Overlay for Readability */}
-      <div className="absolute inset-0 bg-black/40 z-0" />
+      <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
       
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+      <div className="relative z-40 container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16" style={{ pointerEvents: 'auto' }}>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 gap-8 lg:gap-12 items-start lg:items-center">
             {/* Content */}
@@ -52,8 +52,14 @@ export default function HeroSection() {
               
               <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
                 <button
-                  onClick={() => scrollToSection('ai-constellation')}
-                  className="group relative px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-200 text-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-lg whitespace-nowrap flex-shrink-0 h-[56px] flex items-center justify-center"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    scrollToSection('ai-constellation');
+                  }}
+                  style={{ pointerEvents: 'auto', position: 'relative', zIndex: 50 }}
+                  className="group relative px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-200 text-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-lg whitespace-nowrap flex-shrink-0 h-[56px] flex items-center justify-center cursor-pointer"
+                  type="button"
                 >
                   <span className="relative z-10">Explore Our Agents</span>
                   <span className="absolute inset-0 bg-white/10 scale-0 group-active:scale-100 transition-transform duration-300 opacity-0 group-active:opacity-100 rounded-lg" />

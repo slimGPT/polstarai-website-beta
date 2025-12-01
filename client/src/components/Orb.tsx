@@ -90,8 +90,8 @@ export default function Orb({ agentName, previousAgentName }: OrbProps) {
   }, [color1, color2, color3, prevColor1, prevColor2, prevColor3, crossfadeProgress]);
 
   return (
-    <div ref={containerRef} className="orb-wrapper">
-      <div className="orb">
+    <div ref={containerRef} className="orb-wrapper" style={{ pointerEvents: 'none' }}>
+      <div className="orb" style={{ pointerEvents: 'none' }}>
         {/* Outer glow layer */}
         <div className="orb-glow" />
         {/* Main sphere with gradient */}

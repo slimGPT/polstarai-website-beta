@@ -35,7 +35,7 @@ export default function SamyBearHome() {
       <CursorTrail />
       
       <SamyBearHeader />
-      <main className="relative z-10">
+      <main className="relative" style={{ zIndex: 10, position: 'relative' }}>
         {/* Sec 1: Hero */}
         <SamyBearHeroSection />
         

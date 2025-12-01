@@ -116,7 +116,7 @@ export default function ConstellationNetwork({
     >
       <svg
         ref={svgRef}
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ opacity: 0.6 }}
       >
         {/* Base constellation lines */}
@@ -176,7 +176,7 @@ export default function ConstellationNetwork({
         return (
           <div
             key={node.id}
-            className="absolute rounded-full transition-all duration-300 cursor-pointer pointer-events-auto"
+            className="absolute rounded-full transition-all duration-300 cursor-pointer pointer-events-none"
             style={{
               left: `${node.x}%`,
               top: `${node.y}%`,

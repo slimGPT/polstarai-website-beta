@@ -13,7 +13,7 @@ export default function AIConstellationSection() {
       <SubtleStarBackground density="high" />
       <SectionConstellation sectionId="ai-constellation" />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" style={{ position: 'relative' }}>
         <div className="max-w-6xl mx-auto">
           <SectionSeparator variant="gradient" className="mb-8 lg:mb-10" />
       
@@ -25,7 +25,7 @@ export default function AIConstellationSection() {
           </div>
           
           {/* Agent Carousel */}
-          <div ref={carouselRef}>
+          <div ref={carouselRef} className="relative z-30" style={{ pointerEvents: 'auto' }}>
             <AgentsCarousel />
           </div>
         </div>

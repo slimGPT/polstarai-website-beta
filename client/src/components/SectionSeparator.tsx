@@ -53,12 +53,12 @@ export default function SectionSeparator({ variant = 'gradient', className = '' 
 
   if (variant === 'stars') {
     return (
-      <div ref={ref} className={`relative h-12 overflow-hidden ${className}`}>
-        <div className="absolute inset-0 flex items-center justify-center gap-2">
+      <div ref={ref} className={`relative h-12 overflow-hidden pointer-events-none ${className}`}>
+        <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none">
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="w-1 h-1 bg-white/40 rounded-full"
+              className="w-1 h-1 bg-white/40 rounded-full pointer-events-none"
               style={{
                 animationDelay: `${i * 0.2}s`,
                 animation: 'pulse 2s ease-in-out infinite',
@@ -73,8 +73,8 @@ export default function SectionSeparator({ variant = 'gradient', className = '' 
   // Default gradient variant
   return (
     <div ref={ref} className={`relative h-px ${className}`}>
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent blur-sm" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
     </div>
   );
 }

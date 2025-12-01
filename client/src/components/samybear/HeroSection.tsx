@@ -37,7 +37,7 @@ export default function HeroSection() {
                 A Safe, Voice-Driven AI Companion for Children
               </h1>
               <p className="text-lg sm:text-xl lg:text-2xl text-white/80 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                Shaped by UNICEF's vision for child-centred AI. Designed for ages 4–10. Powered by PolstarAI.
+                Shaped by <span className="text-cyan-300 font-semibold">UNICEF's</span> vision for child-centred AI. Designed for ages 4–10. Powered by PolstarAI.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button

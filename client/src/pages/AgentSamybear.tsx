@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Header from '@/components/Header';
+import SamyBearHeader from '@/components/samybear/SamyBearHeader';
 import Footer from '@/components/Footer';
 import SpaceBackground from '@/components/SpaceBackground';
 import ScrollStars from '@/components/ScrollStars';
@@ -8,9 +8,7 @@ import CursorTrail from '@/components/CursorTrail';
 import SubtleStarBackground from '@/components/SubtleStarBackground';
 import UNICEFPillarsSection from '@/components/samybear/UNICEFPillarsSection';
 import FeaturesSection from '@/components/samybear/FeaturesSection';
-import ParentOnboardingSection from '@/components/samybear/ParentOnboardingSection';
 import ParentHubSection from '@/components/samybear/ParentHubSection';
-import EngagementMetricsSection from '@/components/samybear/EngagementMetricsSection';
 import ScrollSection from '@/components/ScrollSection';
 
 export default function AgentSamybear() {
@@ -34,39 +32,44 @@ export default function AgentSamybear() {
       {/* Cursor trail effect */}
       <CursorTrail />
       
-      <Header />
+      <SamyBearHeader />
       
       <main className="relative z-10">
         {/* Hero Section - Title, Tagline, Description with Avatar */}
-        <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
+        <section id="why-samybear" className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-16 samybear-hero-container">
                 {/* Left Column - Text Content */}
                 <ScrollSection animationType="slideRight" delay={0.2}>
-                  <div className="w-full md:w-1/2 flex flex-col justify-center">
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4">
+                  <div className="w-full md:flex-1 flex flex-col justify-center text-center md:text-left samybear-text-container">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 lg:mb-8 leading-tight">
                       SamyBear
                     </h1>
-                    <p className="text-xl sm:text-2xl text-white/80 italic mb-6">
+                    <p className="text-xl sm:text-2xl text-white/80 italic mb-8 lg:mb-10 leading-relaxed" style={{ lineHeight: '1.4' }}>
                       The most complete child-centred companion built for ages 4 to 10
                     </p>
-                    <p className="text-lg sm:text-xl text-white/90 leading-relaxed">
-                      Shaped by UNICEF's vision for child-centred development and powered by PolstarAI's unified intelligence layer, SamyBear is an interactive 3D character that gives children a safe and structured space to explore, learn and build healthy habits. Parents stay fully involved through simple routines, clear visibility and shared moments that keep the learning experience connected to real family life.
-                    </p>
+                    <div className="space-y-4 text-lg sm:text-xl text-white/90 leading-relaxed" style={{ lineHeight: '1.6' }}>
+                      <p>
+                        Shaped by <span className="text-cyan-300 font-semibold">UNICEF's</span> vision and powered by PolstarAI's unified intelligence layer, SamyBear is an interactive 3D companion that gives children a safe space to explore, learn, and build healthy habits.
+                      </p>
+                      <p>
+                        Parents stay fully involved through simple routines, clear visibility, and shared moments that keep learning connected to real family life.
+                      </p>
+                    </div>
                   </div>
                 </ScrollSection>
                 
                 {/* Right Column - Avatar Image */}
                 <ScrollSection animationType="slideLeft" delay={0.4}>
-                  <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end">
-                    <div className="relative">
+                  <div className="w-full md:flex-1 flex items-center justify-center md:justify-end">
+                    <div className="relative samybear-image-container">
                       <img 
                         src="/images/agents/Samybearavatar nobackground.png" 
                         alt="SamyBear Avatar" 
-                        className="max-w-[320px] w-full h-auto object-contain drop-shadow-2xl animate-float"
+                        className="w-full h-auto object-contain drop-shadow-2xl animate-float"
                         style={{
-                          filter: 'drop-shadow(0 10px 30px rgba(59, 130, 246, 0.3))',
+                          filter: 'drop-shadow(0 20px 60px rgba(59, 130, 246, 0.4))',
                           imageRendering: 'high-quality',
                         }}
                         loading="eager"
@@ -97,6 +100,43 @@ export default function AgentSamybear() {
             .animate-float {
               animation: float 6s ease-in-out infinite;
             }
+            .samybear-hero-container {
+              padding-top: 60px;
+              padding-bottom: 60px;
+            }
+            @media (min-width: 768px) {
+              .samybear-hero-container {
+                padding-top: 80px;
+                padding-bottom: 80px;
+              }
+            }
+            @media (min-width: 1024px) {
+              .samybear-hero-container {
+                padding-top: 100px;
+                padding-bottom: 100px;
+              }
+            }
+            .samybear-text-container {
+              max-width: 620px;
+            }
+            .samybear-text-container p,
+            .samybear-text-container > div {
+              max-width: 620px;
+            }
+            .samybear-image-container {
+              transform: translateY(12%);
+            }
+            .samybear-image-container img {
+              height: 336px;
+            }
+            @media (min-width: 768px) {
+              .samybear-image-container {
+                transform: translateY(12%);
+              }
+              .samybear-image-container img {
+                height: 504px;
+              }
+            }
           `}</style>
         </section>
 
@@ -109,20 +149,11 @@ export default function AgentSamybear() {
         {/* How SamyBear Works */}
         <FeaturesSection />
 
-        {/* Parent Onboarding Experience */}
-        <div className="relative">
-          <SubtleStarBackground density="low" />
-          <ParentOnboardingSection />
-        </div>
-
         {/* Parent Hub */}
         <div className="relative">
           <SubtleStarBackground density="low" />
           <ParentHubSection />
         </div>
-
-        {/* Engagement Metrics */}
-        <EngagementMetricsSection />
       </main>
       
       <Footer />

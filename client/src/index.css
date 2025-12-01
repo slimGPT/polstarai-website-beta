@@ -504,4 +504,39 @@ section p:first-of-type {
     height: auto;
   }
 
+  /* ElevenLabs Convai Widget Styles */
+  #voyager-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+
+    /* This gives it the glowing badge look */
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    align-items: center;
+
+    /* Give the internal shadow-DOM widget room to breathe */
+    width: auto;
+    height: auto;
+  }
+
+  /* ElevenLabs Convai fix - prevent widget from blocking clicks */
+  elevenlabs-convai,
+  elevenlabs-convai * {
+    pointer-events: none !important;
+  }
+
+  /* Allow clicks on the actual interaction button */
+  elevenlabs-convai::part(button),
+  elevenlabs-convai::part(mic),
+  elevenlabs-convai::part(widget-button) {
+    pointer-events: auto !important;
+  }
 }

@@ -32,25 +32,29 @@ export default function SamyBearHeader() {
     { label: 'The Problem', href: '#problem' },
     { label: 'Vertical AI', href: '#vertical-ai-delivers' },
     { label: 'AI Constellation', href: '#ai-constellation' },
-    { label: 'Child-Centred Design', href: '#unicef-pillars' },
-    { label: 'How It Works', href: '#features' },
-    { label: 'Parent Hub', href: '#parent-hub' },
+    { label: 'Why PolstarAI', href: '#why-polstar' },
+    { label: 'Contact', href: '#contact' },
   ];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 transition-all duration-300 ${
         isScrolled
           ? 'bg-black/80 backdrop-blur-md border-b border-white/10'
           : 'bg-transparent'
       }`}
+      style={{ position: 'fixed', zIndex: 20 }}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between w-full h-20 lg:h-24">
           {/* LEFT: Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer group flex-shrink-0"
-            onClick={() => scrollToSection('hero')}
+            onClick={() => {
+              console.log('CLICK REGISTERED - Logo');
+              scrollToSection('hero');
+            }}
+            style={{ position: 'relative', zIndex: 20 }}
           >
             <div className="relative flex items-center">
               <img 
@@ -79,8 +83,13 @@ export default function SamyBearHeader() {
               {navItems.map((item) => (
                 <button
                   key={item.href}
-                  onClick={() => scrollToSection(item.href.slice(1))}
-                  className="text-sm font-medium text-white/90 hover:text-white transition-colors duration-200 relative group"
+                  onClick={() => {
+                    console.log('CLICK REGISTERED - Nav link:', item.label);
+                    scrollToSection(item.href.slice(1));
+                  }}
+                  style={{ position: 'relative', zIndex: 20 }}
+                  className="text-sm font-medium text-white/90 hover:text-white transition-colors duration-200 relative group cursor-pointer"
+                  type="button"
                 >
                   {item.label}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400 group-hover:w-full transition-all duration-300" />
@@ -92,9 +101,14 @@ export default function SamyBearHeader() {
           {/* RIGHT: Mobile Menu Button */}
           <div className="flex items-center gap-4 flex-shrink-0">
             <button
-              className="lg:hidden text-white p-2"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden text-white p-2 cursor-pointer"
+              onClick={() => {
+                console.log('CLICK REGISTERED - Mobile menu toggle');
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+              }}
+              style={{ position: 'relative', zIndex: 20 }}
               aria-label="Toggle menu"
+              type="button"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -108,8 +122,13 @@ export default function SamyBearHeader() {
               {navItems.map((item) => (
                 <button
                   key={item.href}
-                  onClick={() => scrollToSection(item.href.slice(1))}
-                  className="text-left text-white/90 hover:text-white transition-colors py-2"
+                  onClick={() => {
+                    console.log('CLICK REGISTERED - Mobile nav link:', item.label);
+                    scrollToSection(item.href.slice(1));
+                  }}
+                  style={{ position: 'relative', zIndex: 20 }}
+                  className="text-left text-white/90 hover:text-white transition-colors py-2 cursor-pointer"
+                  type="button"
                 >
                   {item.label}
                 </button>

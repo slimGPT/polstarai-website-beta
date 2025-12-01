@@ -21,7 +21,7 @@ export default function SamyBearConstellationSection() {
                   Our Flagship: SamyBear
                 </h3>
                 <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-6">
-                  Designed for ages 4–10, shaped by UNICEF's vision, SamyBear is built to be the safest AI for children.
+                  Designed for ages 4–10, shaped by <span className="text-cyan-300 font-semibold">UNICEF's</span> vision, SamyBear is built to be the safest AI for children.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button

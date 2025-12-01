@@ -78,7 +78,7 @@ export default function SamyBearFooter() {
               © {currentYear} PolstarAI. All rights reserved.
             </div>
             <div className="text-white/60 text-sm">
-              Shaped by UNICEF's vision for child-centred AI
+              Shaped by <span className="text-cyan-300 font-semibold">UNICEF's</span> vision for child-centred AI
             </div>
           </div>
         </div>
