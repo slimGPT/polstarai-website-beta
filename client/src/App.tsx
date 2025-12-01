@@ -9,11 +9,14 @@ import AgentSolaria from "./pages/AgentSolaria";
 import AgentFinsight from "./pages/AgentFinsight";
 import AgentLinda from "./pages/AgentLinda";
 import AgentSamybear from "./pages/AgentSamybear";
+import SamyBearHome from "./pages/SamyBearHome";
 
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={PolstarHome} />
+      <Route path={"/"} component={SamyBearHome} />
+      <Route path={"/polstar"} component={PolstarHome} />
+      <Route path={"/samybear"} component={SamyBearHome} />
       <Route path={"/agents/solaria"} component={AgentSolaria} />
       <Route path={"/agents/finsight"} component={AgentFinsight} />
       <Route path={"/agents/linda"} component={AgentLinda} />

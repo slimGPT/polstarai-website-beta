@@ -1,419 +1,571 @@
-# PolstarAI Website
+# PolstarAI Website - Technical Documentation
 
-A premium, cinematic website showcasing PolstarAI's constellation of intelligent AI agents. Built with modern web technologies and featuring sophisticated animations, interactive elements, and a unique visual identity.
+A modern, animated website showcasing PolstarAI's constellation of intelligent AI agents, with a focus on SamyBear - a child-centred AI companion. Built with React, TypeScript, Vite, and GSAP for premium animations.
 
-## 🌟 Overview
+## 📋 Table of Contents
 
-This website represents PolstarAI's brand through a carefully crafted user experience that combines:
-- **Premium animations** inspired by Apple, Otter.ai, Reka, Vapi, and Perplexity
-- **Interactive constellation identity** that creates visual uniqueness
-- **Smooth scroll interactions** for a cinematic feel
-- **Living, breathing orb animations** that serve as the brand-defining element
+- [Quick Start](#quick-start)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Development Workflow](#development-workflow)
+- [Routing](#routing)
+- [Key Components](#key-components)
+- [Build & Deployment](#build--deployment)
+- [Troubleshooting](#troubleshooting)
+- [Code Conventions](#code-conventions)
 
-## ✨ Key Features
-
-### 1. AI Agent Carousel with Animated Orb
-
-The centerpiece of the website is an interactive carousel showcasing 5 AI agents, each with its own animated orb.
-
-#### Orb Animation Features:
-- **Living, Breathing Animation**: Deep 8-second breathing cycle (1.00 → 1.08 scale)
-- **Liquid Flow Effects**: Continuous, organic liquid-like surface animations
-- **Intelligent Micro-movements**: Subtle position shifts that suggest awareness
-- **Surface Ripples**: Liquid surface tension effects with rotating gradients
-- **Multi-layered Depth**: Multiple gradient layers creating 3D-like depth
-- **Color Crossfade**: Smooth 1500ms transitions between agent color palettes
-- **Sparkle Effects**: 12 sparkles orbiting around the orb
-
-#### Agent Color Palettes:
-- **Solaria** (Hospitality): Warm coral (`#FF8C73`, `#FF4F5E`, `#FFB8A8`)
-- **FinSight** (Financial): Financial blue (`#4B82F2`, `#6AD1F8`, `#A9C9FF`)
-- **SamyBear** (Learning): Playful lavender/pink (`#A06BFF`, `#FF8BE7`, `#FFC8FF`)
-- **Mahdi** (University): Academic green (`#3DD6A0`, `#1FBFA7`, `#8DF7CB`)
-- **Ludovic** (Wealth): Luxury gold (`#BFA16E`, `#8C7448`, `#F2E6C9`)
-
-#### Interactive Elements:
-- Hover glow effects on agent tabs
-- Smooth fade-in descriptions when switching agents
-- Optional micro-sound effects (respects user preferences)
-- Navigation arrows with subtle opacity transitions
-
-### 2. Constellation Identity System
-
-A unique visual identity system that creates a cohesive, premium experience across all sections.
-
-#### Features:
-- **Floating Dots**: Interactive nodes that connect on hover
-- **Thin Neon Lines**: SVG-based lines linking stars with glow effects
-- **Section-Specific Constellations**: Each section has its own color and density
-- **Hover Interactions**: Lines brighten and thicken when hovering over nodes
-- **Dynamic Patterns**: Constellations adapt to section context
-
-#### Section Configurations:
-- **Hero**: High density, SamyBear purple
-- **Who We Are**: Medium density, Solaria coral
-- **Why We Shine**: Low density, FinSight blue
-- **AI Constellation**: High density, SamyBear purple
-- **How It Works**: Medium density, Mahdi green
-- **Why Polstar**: Medium density, Ludovic gold
-- **Partners**: Low density, Pink accent
-- **Contact**: Medium density, Cyan accent
-
-### 3. Cursor Trail Navigation
-
-Premium cursor trail effect that follows mouse movement:
-- 8-point trail with gradual fade-out
-- Size reduction over time
-- Glow effects on each point
-- Smooth requestAnimationFrame updates
-- Non-intrusive, decorative element
-
-### 4. Premium Scroll Animations
-
-Apple-style section transitions that make scrolling feel cinematic:
-
-#### Animation Types:
-- **Fade-Up**: 60px upward movement with fade
-- **Slide-Up**: 80px upward movement
-- **Scale-In**: 0.92 → 1.0 scale transformation
-- **Blur-In**: blur(20px) → blur(0px) transition
-- **Fade-Up Blur**: Combined fade-up and blur effect
-
-#### Features:
-- Smooth 1.0-1.3s durations
-- Staggered animations for lists/grids
-- Respects `prefers-reduced-motion`
-- Optimized with GSAP ScrollTrigger
-
-### 5. Section-Specific Enhancements
-
-#### Hero Section:
-- Parallax space background
-- Section-specific constellation
-- Fade-in animations for content
-- Smooth scroll-to-section navigation
-
-#### Who We Are Section:
-- Fade-up blur animation
-- Scale-in for philosophy text
-- Subtle star background
-- Section separator
-
-#### How It Works Section:
-- Fade-up blur header
-- Staggered slide-up cards
-- Medium density constellation
-- 6 technology pillars with icons
-
-#### AI Constellation Section:
-- Blur-in intro animation
-- Fade-up carousel
-- High density constellation
-- Agent carousel with orb
-
-#### Why Polstar Section:
-- Fade-up title
-- Blur-in content with stagger
-- Scale-in security card
-- Parallax background gradients
-- Visual divider
-
-#### Partners Section:
-- Fade-up blur title
-- Scale-in partner cards
-- Blur-in caption
-- Medium density constellation
-
-#### Contact Section:
-- Fade-up blur header
-- Fade-up left text
-- Scale-in form
-- Low density constellation
-
-#### Why We Shine Section:
-- Horizontal glowing lines (top & bottom)
-- Faint constellation background
-- Gradient container around text
-- Fade-up blur animation
-
-### 6. Visual Enhancements
-
-#### Subtle Star Backgrounds:
-- Configurable density (low, medium, high)
-- Pulsing animation
-- Section-specific placement
-- Non-intrusive decorative element
-
-#### Section Separators:
-- Animated gradient lines
-- Scale-in animation on scroll
-- Three variants: line, gradient, stars
-- Visual anchors between sections
-
-#### Parallax Backgrounds:
-- Configurable speed (0-1)
-- Smooth scroll-based movement
-- Applied to hero and key sections
-- Performance optimized
-
-### 7. Responsive Design
-
-- Mobile-first approach
-- Responsive orb sizing (280px → 360px → 400px)
-- Adaptive constellation densities
-- Touch-friendly interactions
-- Optimized animations for mobile
-
-## 🛠️ Tech Stack
-
-### Core Technologies
-
-- **React 18.3.1**: Modern React with hooks
-- **TypeScript**: Type-safe development
-- **Vite**: Fast build tool and dev server
-- **Tailwind CSS**: Utility-first CSS framework
-
-### Animation Libraries
-
-- **GSAP 3.13.0**: Professional animation library
-  - ScrollTrigger plugin for scroll-based animations
-  - Timeline for complex sequences
-  - Performance-optimized animations
-
-- **Framer Motion 12.23.22**: React animation library
-  - Used for component transitions
-  - AnimatePresence for exit animations
-  - Smooth page transitions
-
-### UI Components
-
-- **Radix UI**: Accessible component primitives
-  - Accordion, Dialog, Dropdown, Select, etc.
-  - Fully accessible and customizable
-
-- **Lucide React**: Icon library
-  - Consistent iconography
-  - Tree-shakeable imports
-
-### Styling
-
-- **Tailwind CSS**: Utility-first CSS
-- **Custom CSS**: Advanced animations and effects
-- **CSS Custom Properties**: Dynamic theming
-- **Backdrop Filters**: Glassmorphism effects
-
-### Build Tools
-
-- **Vite**: Build tool and dev server
-- **TypeScript**: Type checking
-- **ESBuild**: Fast bundling
-
-## 📁 Project Structure
-
-```
-client/
-├── src/
-│   ├── components/
-│   │   ├── OrbitSphere.tsx          # Main animated orb component
-│   │   ├── AgentsCarousel.tsx       # Agent carousel with tabs
-│   │   ├── OrbSparkles.tsx          # Sparkle animation around orb
-│   │   ├── ConstellationNetwork.tsx # Interactive constellation dots
-│   │   ├── SectionConstellation.tsx # Section-specific constellations
-│   │   ├── CursorTrail.tsx          # Cursor trail effect
-│   │   ├── ScrollStars.tsx          # Scroll-based star movement
-│   │   ├── ParallaxBackground.tsx   # Parallax effect component
-│   │   ├── SectionSeparator.tsx     # Animated section dividers
-│   │   ├── SubtleStarBackground.tsx # Subtle star field
-│   │   ├── ConstellationBackground.tsx # Constellation with lines
-│   │   ├── HeroSection.tsx          # Hero section
-│   │   ├── WhoWeAreSection.tsx      # About section
-│   │   ├── WhyWeShineSection.tsx    # Value proposition
-│   │   ├── AIConstellationSection.tsx # Agent showcase
-│   │   ├── HowItWorksSection.tsx    # Technology overview
-│   │   ├── WhyPolstarSection.tsx    # Why choose Polstar
-│   │   ├── PartnersSection.tsx      # Partners grid
-│   │   ├── ContactSection.tsx       # Contact form
-│   │   └── ... (other components)
-│   ├── hooks/
-│   │   ├── useScrollAnimation.tsx   # Basic scroll animations
-│   │   └── usePremiumScrollAnimation.tsx # Premium Apple-style animations
-│   ├── utils/
-│   │   └── soundEffects.ts          # Micro-sound effects
-│   ├── constants/
-│   │   └── agentColors.ts           # Agent color palettes
-│   ├── pages/
-│   │   └── PolstarHome.tsx          # Main page
-│   └── index.css                    # Global styles
-└── package.json
-```
-
-## 🎨 Design Philosophy
-
-### Premium & Cinematic
-- Smooth, slow animations (6-8 second cycles)
-- Soft edges and gradients
-- No harsh transitions or fast movements
-- "Calm tech" aesthetic inspired by Otter.ai
-
-### Organic & Alive
-- Breathing animations
-- Liquid flow effects
-- Intelligent micro-movements
-- Surface ripples and organic shapes
-
-### Unique Visual Identity
-- Constellation system creates brand uniqueness
-- Section-specific color palettes
-- Interactive hover effects
-- Cohesive visual language
-
-### Performance First
-- Optimized canvas rendering
-- requestAnimationFrame for smooth 60fps
-- Efficient SVG rendering
-- Lazy loading where appropriate
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ 
-- pnpm (recommended) or npm
+- **Node.js**: 18+ (recommended: 20+)
+- **Package Manager**: `pnpm` (recommended) or `npm`
+- **OS**: Windows, macOS, or Linux
 
 ### Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd "polstar-ai-final Website"
+
 # Install dependencies
 pnpm install
 
 # Start development server
 pnpm dev
 
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
+# The app will be available at http://localhost:3001
 ```
 
-### Development
+### Available Scripts
 
-The development server runs on `http://localhost:5173` (or the next available port).
+```bash
+# Development
+pnpm dev              # Start dev server (port 3001)
+pnpm build            # Build for production
+pnpm preview          # Preview production build
+pnpm start            # Start production server
 
-## 🎯 Key Components Explained
+# Code Quality
+pnpm check            # TypeScript type checking
+pnpm format           # Format code with Prettier
+```
 
-### OrbitSphere Component
+## 🛠️ Tech Stack
 
-The brand-defining animated orb that represents each AI agent.
+### Core Technologies
 
-**Features:**
-- Canvas-based rendering for smooth animations
-- Multi-layered gradients for depth
+- **React 18.3.1** - UI framework
+- **TypeScript 5.6.3** - Type safety
+- **Vite 7.1.7** - Build tool & dev server
+- **Wouter 3.3.5** - Lightweight routing
+- **Tailwind CSS 4.1.14** - Utility-first CSS
+
+### Animation Libraries
+
+- **GSAP 3.13.0** - Professional animations
+  - ScrollTrigger plugin for scroll-based animations
+  - Timeline for complex sequences
+- **Framer Motion 12.23.22** - React animations
+  - Component transitions
+  - AnimatePresence for exit animations
+
+### UI Components
+
+- **Radix UI** - Accessible component primitives
+  - Accordion, Dialog, Dropdown, Select, Tabs, etc.
+- **Lucide React** - Icon library
+- **Sonner** - Toast notifications
+
+### Backend
+
+- **Express.js** - Node.js server
+- **ESBuild** - Fast bundling for server code
+
+## 📁 Project Structure
+
+```
+polstar-ai-final Website/
+├── client/                    # Frontend application
+│   ├── src/
+│   │   ├── components/         # React components
+│   │   │   ├── samybear/      # SamyBear-specific components
+│   │   │   ├── ui/            # Reusable UI components (Radix)
+│   │   │   └── ...            # Shared components
+│   │   ├── pages/             # Page components
+│   │   │   ├── SamyBearHome.tsx      # Main SamyBear homepage
+│   │   │   ├── PolstarHome.tsx        # Original PolstarAI homepage
+│   │   │   ├── AgentSamybear.tsx      # SamyBear detail page
+│   │   │   ├── AgentSolaria.tsx       # Solaria detail page
+│   │   │   ├── AgentFinsight.tsx      # FinSight detail page
+│   │   │   └── AgentLinda.tsx         # Linda detail page
+│   │   ├── hooks/             # Custom React hooks
+│   │   │   ├── useScrollAnimation.tsx
+│   │   │   └── usePremiumScrollAnimation.tsx
+│   │   ├── constants/         # Constants and configs
+│   │   │   └── agentColors.ts # Agent color palettes
+│   │   ├── utils/             # Utility functions
+│   │   │   └── soundEffects.ts
+│   │   ├── contexts/          # React contexts
+│   │   │   └── ThemeContext.tsx
+│   │   ├── App.tsx            # Main app component with routing
+│   │   ├── main.tsx           # Entry point
+│   │   └── index.css          # Global styles
+│   ├── public/                # Static assets
+│   │   └── images/
+│   │       └── agents/        # Agent images
+│   └── index.html             # HTML template
+│
+├── server/                    # Backend server
+│   └── index.ts               # Express server setup
+│
+├── shared/                    # Shared code
+│   └── const.ts              # Shared constants
+│
+├── dist/                      # Build output
+│   ├── index.js              # Bundled server
+│   └── public/               # Static assets
+│
+├── vite.config.ts            # Vite configuration
+├── tsconfig.json             # TypeScript config
+├── package.json              # Dependencies & scripts
+└── README.md                 # This file
+```
+
+## 🔄 Development Workflow
+
+### Starting Development
+
+1. **Install dependencies** (first time only):
+   ```bash
+   pnpm install
+   ```
+
+2. **Start dev server**:
+   ```bash
+   pnpm dev
+   ```
+   - Server runs on `http://localhost:3001` (or next available port)
+   - Hot Module Replacement (HMR) enabled
+   - Auto-reloads on file changes
+
+3. **Access the application**:
+   - Main SamyBear site: `http://localhost:3001/`
+   - Original PolstarAI site: `http://localhost:3001/polstar`
+
+### Development Tips
+
+- **Port conflicts**: If port 3001 is busy, Vite will automatically use the next available port
+- **Type checking**: Run `pnpm check` to verify TypeScript types
+- **Code formatting**: Run `pnpm format` before committing
+- **Component structure**: Follow the existing component patterns in `client/src/components`
+
+## 🗺️ Routing
+
+The application uses **Wouter** for client-side routing. Routes are defined in `client/src/App.tsx`:
+
+```typescript
+// Main routes
+/                    → SamyBearHome (default homepage)
+/polstar             → PolstarHome (original PolstarAI site)
+/samybear            → SamyBearHome (alternative route)
+
+// Agent detail pages
+/agents/samybear     → AgentSamybear
+/agents/solaria      → AgentSolaria
+/agents/finsight     → AgentFinsight
+/agents/linda        → AgentLinda
+
+// Error handling
+/404                 → NotFound
+```
+
+### Adding New Routes
+
+1. Create page component in `client/src/pages/`
+2. Import in `client/src/App.tsx`
+3. Add route to `<Switch>` component:
+
+```typescript
+<Route path="/new-route" component={NewPage} />
+```
+
+## 🧩 Key Components
+
+### Page Components
+
+#### `SamyBearHome.tsx`
+Main homepage featuring:
+- Hero section (PolstarAI hero)
+- Problem section
+- Vertical AI Delivers section
+- AI Constellation section
+- Why Polstar section
+- Contact section
+
+#### `AgentSamybear.tsx`
+SamyBear detail page with:
+- Hero introduction
+- Child-Centred by Design (UNICEF Pillars)
+- How SamyBear Works (Features)
+- Parent Onboarding Experience
+- Parent Hub
+- Engagement Metrics
+
+### Shared Components
+
+#### `AIConstellationSection.tsx`
+Interactive agent carousel with:
+- Animated orb/planet effects
+- Agent tabs for navigation
+- Arrow navigation
+- "Learn more" buttons linking to detail pages
+
+#### `ProblemSection.tsx`
+2-column layout showing:
+- Left: Title and subtitle
+- Right: Three problem cards with icons
+
+#### `UNICEFPillarsSection.tsx`
+Grid of 9 cards representing UNICEF's requirements for child-centred AI
+
+#### `FeaturesSection.tsx`
+Expandable feature cards showing SamyBear capabilities
+
+### Animation Components
+
+#### `Orb.tsx`
+Animated 3D-style orb representing agents:
 - Breathing animation (8-second cycle)
 - Liquid flow effects
-- Intelligent micro-movements
-- Color crossfade between agents
-- Responsive sizing
+- Color transitions between agents
+- Sparkle effects
 
-**Animation Layers:**
-1. Atmospheric glow (breathing)
-2. Outer glow (breathing)
-3. Main orb body (liquid gradient)
-4. Primary highlight (flowing)
-5. Secondary highlight (counter-rotating)
-6. Tertiary highlight (deep)
-7. Surface ripple (liquid effect)
-8. Inner core glow (breathing)
+#### `SpaceBackground.tsx`
+Animated space background with:
+- Stars
+- Shooting stars
+- Nebula clouds
 
-### AgentsCarousel Component
+#### `ScrollStars.tsx`
+Scroll-based star movement effects
 
-Interactive carousel for showcasing AI agents.
+#### `CursorTrail.tsx`
+Cursor trail effect following mouse movement
 
-**Features:**
-- Agent tabs with hover glow
-- Navigation arrows
-- Smooth agent switching
-- Fade-in descriptions
-- Sparkle effects around orb
-- Optional sound effects
+### Hooks
 
-### ConstellationNetwork Component
+#### `useScrollAnimation.tsx`
+Basic scroll-triggered animations:
+```typescript
+const ref = useScrollAnimation({ 
+  animation: 'fadeInUp', 
+  delay: 0.1 
+});
+```
 
-Interactive constellation system for visual identity.
+#### `usePremiumScrollAnimation.tsx`
+Premium Apple-style animations with GSAP:
+```typescript
+const ref = usePremiumScrollAnimation({ 
+  animation: 'fadeUp', 
+  duration: 1.2,
+  stagger: 0.1 
+});
+```
 
-**Features:**
-- Configurable node density
-- SVG-based line rendering
-- Hover interactions
-- Dynamic line connections
-- Color-coded per section
+## 🎨 Styling
 
-## 🎭 Animation Details
+### Tailwind CSS
 
-### Scroll Animations
+The project uses Tailwind CSS 4.x with utility classes:
 
-All scroll animations use GSAP ScrollTrigger for performance:
-- Trigger point: `top 85%` (starts when element is 85% from top)
-- Duration: 1.0-1.3 seconds
-- Easing: `power3.out` (smooth deceleration)
-- Once: true (animates once on scroll)
+```tsx
+<div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+  {/* Content */}
+</div>
+```
 
-### Orb Animations
+### Custom CSS
 
-Canvas-based animations running at 60fps:
-- Breathing: 8-second sine wave cycle
-- Liquid flow: Continuous rotation
-- Micro-movements: Slow sine/cosine waves
-- Surface ripple: Rotating gradient overlay
+Global styles in `client/src/index.css`:
+- Custom animations
+- Component-specific styles
+- Responsive breakpoints
 
-### Constellation Animations
+### Color System
 
-- Node hover: 300ms transitions
-- Line connections: Dynamic SVG rendering
-- Sparkle effects: Continuous pulsing
+Agent colors defined in `client/src/constants/agentColors.ts`:
+- **SamyBear**: Purple/Pink (`#A06BFF`, `#FF8BE7`, `#FFC8FF`)
+- **Solaria**: Coral (`#FF8C73`, `#FF4F5E`, `#FFB8A8`)
+- **FinSight**: Blue (`#4B82F2`, `#6AD1F8`, `#A9C9FF`)
+- **Linda**: Yellow/Gold (pricing agent)
 
-## ♿ Accessibility
+## 🔨 Build & Deployment
 
-- Respects `prefers-reduced-motion`
-- Semantic HTML structure
-- ARIA labels on interactive elements
-- Keyboard navigation support
-- Screen reader friendly
+### Production Build
 
-## 🌐 Browser Support
+```bash
+# Build both client and server
+pnpm build
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+# Output:
+# - dist/public/     → Client static files
+# - dist/index.js    → Server bundle
+```
 
-## 📝 License
+### Production Server
 
-MIT License - See LICENSE file for details
+```bash
+# Start production server
+pnpm start
 
-## 👥 Credits
+# Or manually:
+NODE_ENV=production node dist/index.js
+```
 
-Inspired by:
-- **Otter.ai**: Calm tech aesthetic, agent carousel design
-- **Apple**: Premium scroll animations, attention to detail
-- **Reka**: Liquid, organic animations
-- **Vapi**: Interactive orb designs
-- **Perplexity**: Clean, modern interface
-- **Apple Vision Pro**: Breathing, alive animations
+### Build Process
 
-## 🔮 Future Enhancements
+1. **Client build**: Vite bundles React app to `dist/public/`
+2. **Server build**: ESBuild bundles Express server to `dist/index.js`
+3. **Static assets**: Copied from `client/public/` to `dist/public/`
 
-Potential improvements:
-- [ ] Add more agent-specific orb behaviors
-- [ ] Enhanced constellation patterns
-- [ ] More interactive hover effects
-- [ ] Advanced parallax effects
-- [ ] Performance optimizations
-- [ ] Additional animation presets
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+NODE_ENV=production
+PORT=3000
+```
+
+## 🐛 Troubleshooting
+
+### Port Already in Use
+
+**Problem**: Port 3001 is already in use
+
+**Solution**:
+```bash
+# Windows (PowerShell)
+netstat -ano | findstr :3001
+taskkill /PID <PID> /F
+
+# macOS/Linux
+lsof -ti:3001 | xargs kill -9
+```
+
+Or let Vite use the next available port (it does this automatically).
+
+### TypeScript Errors
+
+**Problem**: Type errors in IDE
+
+**Solution**:
+```bash
+# Check types
+pnpm check
+
+# Restart TypeScript server in IDE
+# VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
+```
+
+### Build Failures
+
+**Problem**: Build fails with errors
+
+**Solution**:
+```bash
+# Clear cache and rebuild
+rm -rf node_modules dist
+pnpm install
+pnpm build
+```
+
+### Hot Reload Not Working
+
+**Problem**: Changes not reflecting in browser
+
+**Solution**:
+1. Check browser console for errors
+2. Hard refresh: `Cmd/Ctrl + Shift + R`
+3. Restart dev server: `pnpm dev`
+
+### Animation Issues
+
+**Problem**: Animations not working
+
+**Solution**:
+1. Check GSAP ScrollTrigger registration in component
+2. Verify `ScrollTrigger.refresh()` is called after mount
+3. Check browser console for GSAP errors
+
+## 📝 Code Conventions
+
+### File Naming
+
+- **Components**: PascalCase (e.g., `SamyBearHome.tsx`)
+- **Hooks**: camelCase with `use` prefix (e.g., `useScrollAnimation.tsx`)
+- **Utils**: camelCase (e.g., `soundEffects.ts`)
+- **Constants**: camelCase (e.g., `agentColors.ts`)
+
+### Component Structure
+
+```typescript
+// 1. Imports
+import { useState } from 'react';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
+// 2. Types/Interfaces (if needed)
+interface Props {
+  title: string;
+}
+
+// 3. Component
+export default function ComponentName({ title }: Props) {
+  // 4. Hooks
+  const ref = useScrollAnimation({ animation: 'fadeUp' });
+  
+  // 5. State
+  const [state, setState] = useState();
+  
+  // 6. Effects
+  useEffect(() => {
+    // Effect logic
+  }, []);
+  
+  // 7. Handlers
+  const handleClick = () => {
+    // Handler logic
+  };
+  
+  // 8. Render
+  return (
+    <div ref={ref}>
+      {/* JSX */}
+    </div>
+  );
+}
+```
+
+### Import Order
+
+1. React and React hooks
+2. Third-party libraries
+3. Internal components
+4. Hooks
+5. Utils
+6. Types/Constants
+7. Styles
+
+### TypeScript
+
+- Use TypeScript for all new files
+- Define interfaces for component props
+- Avoid `any` type - use `unknown` if needed
+- Use type inference where possible
+
+### Styling Guidelines
+
+- Prefer Tailwind utility classes
+- Use custom CSS only when necessary
+- Maintain consistent spacing (4px grid)
+- Use semantic color names from Tailwind
+
+## 🔍 Common Tasks
+
+### Adding a New Section
+
+1. Create component in `client/src/components/`
+2. Import in page component (`SamyBearHome.tsx` or `PolstarHome.tsx`)
+3. Add section with proper spacing and background effects
+4. Add scroll animations using hooks
+
+### Modifying Agent Colors
+
+Edit `client/src/constants/agentColors.ts`:
+
+```typescript
+export const agentColors = {
+  education: {
+    primary: '#A06BFF',
+    secondary: '#FF8BE7',
+    // ...
+  },
+  // ...
+};
+```
+
+### Adding a New Agent
+
+1. Add agent to `AgentsCarousel.tsx`:
+```typescript
+const agents: Agent[] = [
+  // ... existing agents
+  {
+    name: 'New Agent',
+    key: 'newagent',
+    displayName: 'NewAgent',
+    description: 'Agent description',
+    route: '/agents/newagent',
+  },
+];
+```
+
+2. Create detail page: `client/src/pages/AgentNewagent.tsx`
+3. Add route in `App.tsx`
+4. Add colors to `agentColors.ts`
+
+### Updating Content
+
+- **Text content**: Edit component files directly
+- **Images**: Add to `client/public/images/` and reference with `/images/...`
+- **Styling**: Modify Tailwind classes or `index.css`
+
+## 📚 Additional Resources
+
+### Documentation
+
+- [React Documentation](https://react.dev/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Vite Guide](https://vitejs.dev/guide/)
+- [GSAP Documentation](https://greensock.com/docs/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Wouter Router](https://github.com/molefrog/wouter)
+
+### Project-Specific
+
+- Agent color palettes: `client/src/constants/agentColors.ts`
+- Animation hooks: `client/src/hooks/`
+- Component examples: `client/src/components/`
+
+## 🤝 Contributing
+
+### Before Committing
+
+1. Run type check: `pnpm check`
+2. Format code: `pnpm format`
+3. Test in browser: `pnpm dev`
+4. Verify build: `pnpm build`
+
+### Git Workflow
+
+1. Create feature branch from `main`
+2. Make changes
+3. Test thoroughly
+4. Commit with descriptive messages
+5. Push and create pull request
+
+## 📞 Support
+
+For technical issues or questions:
+- Check this README first
+- Review component code for examples
+- Check browser console for errors
+- Review build output for warnings
 
 ---
 
-Built with ❤️ by the PolstarAI team
-
-#   p o l s t a r a i - w e b s i t e - b e t a  
- 
+**Last Updated**: 2024
+**Maintained by**: PolstarAI Tech Team

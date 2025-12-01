@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import SectionConstellation from './SectionConstellation';
-import HeroStarField from './HeroStarField';
+import SectionConstellation from '@/components/SectionConstellation';
+import HeroStarField from '@/components/HeroStarField';
 
-export default function HeroSection() {
+export default function SamyBearHeroSection() {
   const titleRef = useScrollAnimation({ animation: 'fadeInUp', delay: 0.1 });
   const sloganRef = useScrollAnimation({ animation: 'fadeInUp', delay: 0.2 });
   const buttonsRef = useScrollAnimation({ animation: 'fadeInUp', delay: 0.5 });
@@ -11,7 +11,7 @@ export default function HeroSection() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const headerHeight = 80; // Account for sticky header
+      const headerHeight = 96;
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
       const offsetPosition = elementPosition - headerHeight;
 
@@ -21,7 +21,6 @@ export default function HeroSection() {
       });
     }
   };
-
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-x-hidden overflow-y-visible">
@@ -66,3 +65,4 @@ export default function HeroSection() {
     </section>
   );
 }
+
