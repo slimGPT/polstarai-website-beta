@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import SectionConstellation from '@/components/SectionConstellation';
-import HeroStarField from '@/components/HeroStarField';
 
 export default function SamyBearHeroSection() {
   const [introComplete, setIntroComplete] = useState(false);
@@ -140,90 +138,73 @@ export default function SamyBearHeroSection() {
   }, []);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
-      {/* Section-specific constellation */}
-      <SectionConstellation sectionId="hero" />
-      
-      {/* Subtle starfield background */}
-      <HeroStarField />
+    <section 
+      id="hero" 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden" 
+      style={{ 
+        position: 'relative', 
+        zIndex: 1,
+        willChange: 'transform',
+        transform: 'translate3d(0, 0, 0)',
+      }}
+    >
+      {/* Discrete background image - Lazy loaded and optimized */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          zIndex: 0,
+          willChange: 'transform',
+          transform: 'translate3d(0, 0, 0)',
+        }}
+      >
+        <img 
+          src="/images/WhatsApp Image 2025-09-03 at 15.28.03_0f0c9650.jpg"
+          alt=""
+          className="w-full h-full object-cover opacity-30"
+          style={{
+            mixBlendMode: 'soft-light',
+            loading: 'lazy' as const,
+            decoding: 'async' as const,
+            fetchPriority: 'low' as const,
+          }}
+        />
+      </div>
       
       {/* Dark Overlay for Readability */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-none" style={{ zIndex: 0 }} />
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" style={{ zIndex: 1 }} />
       
       {/* Intro Sequence */}
       {!introComplete && (
         <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-          {/* Blue AI Circle - Radial Starburst Pattern */}
+          {/* Logo - Clean Replacement */}
           <div ref={aiCircleRef} className="absolute z-30 flex flex-col items-center justify-center pointer-events-none">
             <div className="relative">
-              {/* Radial Starburst Circle - Matching Image Pattern */}
-              <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden">
-                {/* Radial gradient background - dark blue center to light blue/white edges */}
-                <div 
-                  className="absolute inset-0 rounded-full" 
-                  style={{ 
-                    background: 'radial-gradient(circle at center, rgba(0, 0, 100, 0.8) 0%, rgba(0, 0, 200, 0.6) 30%, rgba(0, 100, 255, 0.4) 60%, rgba(150, 200, 255, 0.2) 80%, rgba(255, 255, 255, 0.1) 100%)',
+              {/* Logo Image */}
+              <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 flex items-center justify-center relative">
+                <img 
+                  src="/images/logomain.png" 
+                  alt="PolstarAI Logo" 
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                  style={{
+                    filter: 'drop-shadow(0 20px 60px rgba(59, 130, 246, 0.4))',
+                    imageRendering: 'high-quality',
                   }}
                 />
-                {/* Create radial rays */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
-                  <defs>
-                    <radialGradient id="rayGradient" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="white" stopOpacity="0.8" />
-                      <stop offset="50%" stopColor="cyan" stopOpacity="0.6" />
-                      <stop offset="100%" stopColor="blue" stopOpacity="0.4" />
-                    </radialGradient>
-                  </defs>
-                  {[...Array(32)].map((_, i) => {
-                    const angle = (i * 360) / 32;
-                    const x1 = 100 + 50 * Math.cos((angle * Math.PI) / 180);
-                    const y1 = 100 + 50 * Math.sin((angle * Math.PI) / 180);
-                    const x2 = 100 + 100 * Math.cos((angle * Math.PI) / 180);
-                    const y2 = 100 + 100 * Math.sin((angle * Math.PI) / 180);
-                    return (
-                      <line
-                        key={i}
-                        x1={x1}
-                        y1={y1}
-                        x2={x2}
-                        y2={y2}
-                        stroke="url(#rayGradient)"
-                        strokeWidth="2"
-                        opacity="0.6"
-                      />
-                    );
-                  })}
-                  {/* Curved white/light blue segments in quadrants */}
-                  <path d="M100 0 A100 100 0 0 1 200 100 L100 100 Z" fill="rgba(255,255,255,0.1)" />
-                  <path d="M0 100 A100 100 0 0 1 100 200 L100 100 Z" fill="rgba(255,255,255,0.1)" />
-                  <path d="M100 0 A100 100 0 0 0 0 100 L100 100 Z" fill="rgba(150,200,255,0.1)" />
-                  <path d="M200 100 A100 100 0 0 0 100 200 L100 100 Z" fill="rgba(150,200,255,0.1)" />
-                </svg>
-                
-                {/* Center dark cross/intersection */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-blue-900 rounded-full opacity-80" />
-                </div>
-                
-                {/* Static overlay for dynamic effect (no rotation) */}
-                <div 
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent" 
+                {/* Subtle glow effect behind logo */}
+                <div
+                  className="absolute inset-0 -z-10 blur-3xl opacity-30"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, transparent 70%)',
+                  }}
                 />
               </div>
-              {/* Glow effect */}
-              <div
-                className="absolute inset-0 -z-10 blur-3xl opacity-40"
-                style={{
-                  background: 'radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, transparent 70%)',
-                }}
-              />
             </div>
             
             {/* Greeting Text */}
             <div ref={greetingRef} className="mt-6 text-center">
               <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                 <span className="bg-gradient-to-r from-blue-300 via-cyan-300 to-white bg-clip-text text-transparent">
-                  Ever wonder what makes an agent… EXCEPTIONAL?
+                  Peace of Mind in an AI-Driven Childhood
                 </span>
               </p>
             </div>
@@ -242,31 +223,49 @@ export default function SamyBearHeroSection() {
       <div 
         ref={contentRef}
         className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16"
-        style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}
+        style={{ 
+          pointerEvents: 'auto', 
+          position: 'relative', 
+          zIndex: 10,
+          willChange: 'transform, opacity',
+          transform: 'translate3d(0, 0, 0)',
+        }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 lg:mb-4 leading-tight">
               <span className="bg-gradient-to-r from-white via-blue-200 to-cyan-200 bg-clip-text text-transparent">
-                Purpose-built agents powered by a unified intelligence layer
+                Adaptive AI for Curious Young Minds
               </span>
             </h1>
             
             <p className="text-base sm:text-lg lg:text-xl text-cyan-300 italic mb-6 lg:mb-8 font-normal tracking-wide opacity-90 max-w-3xl">
-              One agent. One painful problem. One ideal customer.
+              We build AI systems that support early learning, safe exploration, and healthy digital habits.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6" style={{ position: 'relative', zIndex: 11 }}>
               <button
                 onClick={() => {
-                  console.log('CLICK REGISTERED - Explore Our Agents button');
-                  scrollToSection('ai-constellation');
+                  console.log('CLICK REGISTERED - Join Waitlist button');
+                  scrollToSection('contact');
+                }}
+                style={{ position: 'relative', zIndex: 12 }}
+                className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 text-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 whitespace-nowrap flex-shrink-0 h-[56px] flex items-center justify-center cursor-pointer"
+                type="button"
+              >
+                <span className="relative z-10">Join the Waitlist</span>
+                <span className="absolute inset-0 bg-white/10 scale-0 group-active:scale-100 transition-transform duration-300 opacity-0 group-active:opacity-100 rounded-lg" />
+              </button>
+              <button
+                onClick={() => {
+                  console.log('CLICK REGISTERED - Learn More button');
+                  scrollToSection('samybear');
                 }}
                 style={{ position: 'relative', zIndex: 12 }}
                 className="group relative px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-200 text-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-lg whitespace-nowrap flex-shrink-0 h-[56px] flex items-center justify-center cursor-pointer"
                 type="button"
               >
-                <span className="relative z-10">Explore Our Agents</span>
+                <span className="relative z-10">Learn More</span>
                 <span className="absolute inset-0 bg-white/10 scale-0 group-active:scale-100 transition-transform duration-300 opacity-0 group-active:opacity-100 rounded-lg" />
               </button>
             </div>

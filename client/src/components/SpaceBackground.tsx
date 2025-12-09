@@ -1,9 +1,43 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function SpaceBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile and lazy load
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    
+    // Lazy load: Only render after hero section is scrolled past or after initial delay
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Start rendering stars when hero section is no longer visible
+            setTimeout(() => setShouldRender(true), 300);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const heroSection = document.getElementById('hero');
+    if (heroSection) {
+      observer.observe(heroSection);
+    } else {
+      // Fallback: render after 1 second if hero not found
+      setTimeout(() => setShouldRender(true), 1000);
+    }
+
+    return () => {
+      if (heroSection) observer.unobserve(heroSection);
+    };
+  }, []);
 
   useEffect(() => {
+    if (!shouldRender) return;
+
     // Add pulse animation keyframes dynamically
     const style = document.createElement('style');
     style.textContent = `
@@ -14,22 +48,22 @@ export default function SpaceBackground() {
       
       @keyframes shootingStar {
         0% {
-          transform: translate(0, 0);
+          transform: translate3d(0, 0, 0);
           opacity: 1;
         }
         100% {
-          transform: translate(120vw, 60vh);
+          transform: translate3d(120vw, 60vh, 0);
           opacity: 0;
         }
       }
       
       @keyframes floatCloud {
         0%, 100% {
-          transform: translate(0, 0);
+          transform: translate3d(0, 0, 0);
           opacity: 0.1;
         }
         50% {
-          transform: translate(30px, -20px);
+          transform: translate3d(30px, -20px, 0);
           opacity: 0.2;
         }
       }
@@ -39,10 +73,11 @@ export default function SpaceBackground() {
     return () => {
       document.head.removeChild(style);
     };
-  }, []);
+  }, [shouldRender]);
 
-  // Generate stars - reduced density by 30% (120 -> 84)
-  const stars = Array.from({ length: 84 }, (_, i) => ({
+  // Generate stars - reduced density on mobile, filter hero section
+  const starCount = isMobile ? 30 : 60; // Reduced on mobile
+  const stars = Array.from({ length: starCount }, (_, i) => ({
     id: i,
     size: Math.random() * 3 + 1,
     top: Math.random() * 100,
@@ -50,18 +85,20 @@ export default function SpaceBackground() {
     delay: Math.random() * 3,
     duration: Math.random() * 2 + 1,
     opacity: Math.random() * 0.7 + 0.3,
-  }));
+  })).filter(star => star.top >= 50); // Only show stars below hero section
 
-  // Generate shooting stars - slower movement (longer duration)
-  const shootingStars = Array.from({ length: 5 }, (_, i) => ({
+  // Generate shooting stars - fewer on mobile
+  const shootingStarCount = isMobile ? 2 : 5;
+  const shootingStars = Array.from({ length: shootingStarCount }, (_, i) => ({
     id: i,
-    duration: Math.random() * 5 + 4, // Slower: 4-9s instead of 2-5s
+    duration: Math.random() * 5 + 4, // Slower: 4-9s
     delay: i * 3,
     top: Math.random() * 100,
-  }));
+  })).filter(star => star.top >= 50); // Only show shooting stars below hero section
 
-  // Generate more subtle cloud/nebula effects for full page
-  const clouds = Array.from({ length: 8 }, (_, i) => ({
+  // Generate clouds - fewer on mobile
+  const cloudCount = isMobile ? 4 : 8;
+  const clouds = Array.from({ length: cloudCount }, (_, i) => ({
     id: i,
     size: Math.random() * 400 + 300,
     top: Math.random() * 100,
@@ -69,6 +106,26 @@ export default function SpaceBackground() {
     duration: Math.random() * 10 + 15,
     delay: Math.random() * 5,
   }));
+
+
+  // Don't render until lazy loaded
+  if (!shouldRender) {
+    return (
+      <div
+        ref={containerRef}
+        className="fixed inset-0 overflow-hidden pointer-events-none"
+        style={{ 
+          zIndex: 0,
+          minHeight: '100vh',
+          height: '100%',
+          width: '100%'
+        }}
+      >
+        {/* Dark black background only - no animations */}
+        <div className="absolute inset-0 bg-black" />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -78,7 +135,8 @@ export default function SpaceBackground() {
         zIndex: 0,
         minHeight: '100vh',
         height: '100%',
-        width: '100%'
+        width: '100%',
+        willChange: 'transform',
       }}
     >
       {/* Dark black background with subtle gradients */}
@@ -103,7 +161,7 @@ export default function SpaceBackground() {
         />
       ))}
 
-      {/* Twinkling stars */}
+      {/* Twinkling stars - only below hero section */}
       {stars.map((star) => (
         <div
           key={`star-${star.id}`}
@@ -119,11 +177,13 @@ export default function SpaceBackground() {
             animationIterationCount: 'infinite',
             opacity: star.opacity,
             boxShadow: `0 0 ${star.size * 3}px rgba(255, 255, 255, 0.6), 0 0 ${star.size * 5}px rgba(59, 130, 246, 0.3)`,
+            willChange: 'opacity, transform',
+            transform: 'translate3d(0, 0, 0)',
           }}
         />
       ))}
 
-      {/* Shooting stars */}
+      {/* Shooting stars - only below hero section */}
       {shootingStars.map((shootingStar) => (
         <div
           key={`shooting-${shootingStar.id}`}
@@ -137,6 +197,8 @@ export default function SpaceBackground() {
             animationIterationCount: 'infinite',
             animationDelay: `${shootingStar.delay}s`,
             boxShadow: '0 0 10px 2px rgba(255, 255, 255, 0.8)',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)',
           }}
         />
       ))}

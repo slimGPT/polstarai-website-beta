@@ -30,9 +30,10 @@ export default function SamyBearHeader() {
 
   const navItems = [
     { label: 'The Problem', href: '#problem' },
-    { label: 'Vertical AI', href: '#vertical-ai-delivers' },
-    { label: 'AI Constellation', href: '#ai-constellation' },
-    { label: 'Why PolstarAI', href: '#why-polstar' },
+    { label: 'Why PolstarAI', href: '#polstar-mission' },
+    { label: 'SamyBear', href: '#samybear' },
+    { label: 'Our Tech', href: '#agentic-ai' },
+    { label: 'How It Works', href: '#family-flow' },
     { label: 'Contact', href: '#contact' },
   ];
 
@@ -79,7 +80,7 @@ export default function SamyBearHeader() {
 
           {/* CENTER: Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center justify-center flex-1 mx-8">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-6">
               {navItems.map((item) => (
                 <button
                   key={item.href}

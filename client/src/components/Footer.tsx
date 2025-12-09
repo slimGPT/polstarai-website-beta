@@ -4,9 +4,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative py-8 lg:py-12 bg-black border-t border-white/10">
+    <footer className="relative py-12 lg:py-16 bg-black border-t border-white/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        {/* Footer Links */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-white/10">
           <div className="text-white/60 text-sm">
             © {currentYear} PolstarAI. All rights reserved.
           </div>

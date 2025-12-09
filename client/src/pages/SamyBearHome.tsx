@@ -4,9 +4,12 @@ import SamyBearHeader from '@/components/samybear/SamyBearHeader';
 import Footer from '@/components/Footer';
 import SamyBearHeroSection from '@/components/samybear/SamyBearHeroSection';
 import ProblemSection from '@/components/ProblemSection';
-import VerticalAIDeliversSection from '@/components/VerticalAIDeliversSection';
-import AIConstellationSection from '@/components/AIConstellationSection';
-import WhyPolstarSection from '@/components/WhyPolstarSection';
+import GenericAILimitationsSection from '@/components/GenericAILimitationsSection';
+import PolstarMissionSection from '@/components/PolstarMissionSection';
+import AgenticAISection from '@/components/AgenticAISection';
+import SamyBearFeaturedSection from '@/components/SamyBearFeaturedSection';
+import FamilyFlowSection from '@/components/FamilyFlowSection';
+import ParentDashboardPlaceholderSection from '@/components/ParentDashboardPlaceholderSection';
 import ContactSection from '@/components/ContactSection';
 import SpaceBackground from '@/components/SpaceBackground';
 import ScrollStars from '@/components/ScrollStars';
@@ -38,22 +41,37 @@ export default function SamyBearHome() {
       <main className="relative" style={{ zIndex: 10, position: 'relative' }}>
         {/* Sec 1: Hero */}
         <SamyBearHeroSection />
+        <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 2: The Problem */}
+        {/* Sec 2: Why Children Need Humane AI */}
         <ProblemSection />
-        
-        {/* Sec 3: What Vertical AI Delivers */}
-        <VerticalAIDeliversSection />
-        
-        {/* Sec 4: AI Constellation */}
-        <AIConstellationSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Why Polstar Section */}
-        <WhyPolstarSection />
+        {/* Sec 3: Why Generic AI Is Not Enough */}
+        <GenericAILimitationsSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Contact Section */}
+        {/* Sec 4: Why PolstarAI Exists */}
+        <PolstarMissionSection />
+        <SectionDivider variant="gradient" className="opacity-20 my-0" />
+        
+        {/* Sec 5: Meet SamyBear */}
+        <SamyBearFeaturedSection />
+        <SectionDivider variant="gradient" className="opacity-20 my-0" />
+        
+        {/* Sec 6: The Tech Behind It */}
+        <AgenticAISection />
+        <SectionDivider variant="gradient" className="opacity-20 my-0" />
+        
+        {/* Sec 7: How Families Use SamyBear */}
+        <FamilyFlowSection />
+        <SectionDivider variant="gradient" className="opacity-20 my-0" />
+        
+        {/* Sec 8: Parent Dashboard Preview */}
+        <ParentDashboardPlaceholderSection />
+        <SectionDivider variant="gradient" className="opacity-20 my-0" />
+        
+        {/* Sec 9: Join the Waitlist */}
         <ContactSection />
       </main>
       <Footer />

@@ -24,8 +24,8 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 3001,
-    strictPort: false, // Will find next available port if 3001 is busy
+    port: 3000,
+    strictPort: false, // Will find next available port if 3000 is busy
     host: '0.0.0.0', // Listen on all interfaces (IPv4 and IPv6)
     allowedHosts: [
       ".manuspre.computer",

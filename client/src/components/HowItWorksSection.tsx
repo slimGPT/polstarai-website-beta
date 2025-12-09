@@ -1,107 +1,149 @@
-import { Brain, Database, Cpu, Users, Zap, Globe } from 'lucide-react';
+import { useState } from 'react';
 import { usePremiumScrollAnimation } from '@/hooks/usePremiumScrollAnimation';
 import SectionSeparator from './SectionSeparator';
 import SubtleStarBackground from './SubtleStarBackground';
 import SectionConstellation from './SectionConstellation';
+import { Mic, Brain, BookOpen } from 'lucide-react';
 
-const pillars = [
+const features = [
   {
-    title: 'Natural Understanding',
-    tagline: 'Conversations feel human, not scripted.',
-    description: 'Each agent begins with a multilingual NLP layer powered by Whisper STT that detects intent, extracts key entities, and understands tone and context.',
+    id: 'voice-first',
+    icon: Mic,
+    title: 'Voice-First Interaction System',
+    description: 'Proactive, personalized interactions that guide children naturally',
+    details: [
+      {
+        subtitle: 'Greeting Ritual (Personalized & Guided)',
+        example: '"Good morning, Leila! Your mom wants us to practice counting today. Should we count jungle animals together?"',
+      },
+      {
+        subtitle: 'Parent-Triggered Learning Routines',
+        example: '"Your dad added a reading goal. Want to read your story from yesterday?"',
+      },
+      {
+        subtitle: 'Contextual Memory Prompts',
+        example: '"Yesterday we talked about dinosaurs! Do you remember what T-Rex eats?"',
+      },
+      {
+        subtitle: 'Built-In Choice Architecture',
+        example: '"Should we hear a story, play a counting game, or learn a new song?"',
+      },
+      {
+        subtitle: 'Anti-Dependency Design',
+        example: '"Go show your mom the butterfly drawing you made!" (with time limits and break reminders)',
+      },
+    ],
+  },
+  {
+    id: 'memory',
     icon: Brain,
-    gradient: 'from-blue-500 to-cyan-500',
+    title: 'Memory Architecture',
+    description: 'Contextual understanding that grows with each interaction',
+    details: [
+      {
+        subtitle: 'Session Memory',
+        example: 'Child: "What do elephants eat again?" SamyBear: "Grass, leaves, and fruit! Remember how they use their trunks to grab food?"',
+      },
+      {
+        subtitle: 'Long-Term Memory',
+        example: 'Stores safe, parent-approved details: name, age, interests, progress, favorite stories, family details',
+      },
+      {
+        subtitle: 'Contextual Memory (Parent Goals)',
+        example: '"Your mom wants us to practice the alphabet today. Ready for the ABC song?"',
+      },
+    ],
   },
   {
-    title: 'Knowledge That Stays Accurate',
-    tagline: 'Each agent retrieves the right information for its domain before reasoning.',
-    description: 'Agents connect to structured datasets through RAG pipelines with Pinecone and Firebase data to give grounded, reliable answers and avoid hallucinations.',
-    icon: Database,
-    gradient: 'from-cyan-500 to-blue-500',
-  },
-  {
-    title: 'Advanced Reasoning Models',
-    tagline: 'At the heart is our reasoning engine powered by GPT-4o and GPT 5.1 (Experimental).',
-    description: 'Meaning that instead of just answering, it interprets, compares, evaluates, and adapts recommendations to each user\'s situation or need.',
-    icon: Cpu,
-    gradient: 'from-cyan-500 to-yellow-500',
-  },
-  {
-    title: 'Adaptive Interaction Layer',
-    tagline: 'Agents adjust their tone, behavior, and response style.',
-    description: 'This adaptability is powered by ElevenLabs\'s TTS, character profiles and session-aware memory. The result is communication that feels personal, natural, and emotionally aligned.',
-    icon: Users,
-    gradient: 'from-blue-500 to-cyan-500',
-  },
-  {
-    title: 'Operational Execution',
-    tagline: 'Our agents don\'t just talk, they act!',
-    description: 'Beyond conversation, our agents take action by triggering workflows, logging requests, updating dashboards, or pulling real-time data. This is done through Node.js backends combined with orchestration and automation layers in the stack. The outcome is AI that doesn\'t just talk, it gets things done.',
-    icon: Zap,
-    gradient: 'from-yellow-500 to-cyan-500',
-  },
-  {
-    title: 'Cross-Platform Delivery',
-    tagline: 'All PolstarAI agents operate seamlessly across web, mobile, Telegram, WhatsApp, and internal business tools.',
-    description: 'A unified architecture powered by shared APIs, MCP servers, and orchestration layers ensures every agent behaves consistently no matter the interface. The result is a single intelligence available everywhere; reliable, responsive, and ready whenever you need it.',
-    icon: Globe,
-    gradient: 'from-blue-500 to-cyan-500',
+    id: 'learning',
+    icon: BookOpen,
+    title: 'Socratic Method Learning',
+    description: 'Guiding discovery through questions, not direct answers',
+    details: [
+      {
+        subtitle: 'Guiding, Not Answering',
+        example: 'Instead of "It\'s 4", SamyBear asks: "If you have 2 apples and I give you 2 more, how many do we have? Let\'s count!"',
+      },
+      {
+        subtitle: 'Expert-Reviewed Content',
+        example: 'All material is age-appropriate, reviewed by educators, based on Montessori, Common Core, and Reggio Emilia principles',
+      },
+    ],
   },
 ];
 
 export default function HowItWorksSection() {
-  const headerRef = usePremiumScrollAnimation({ animation: 'fadeUpBlur', duration: 1.2 });
-  const cardsRef = usePremiumScrollAnimation({ animation: 'slideUp', stagger: 0.12, delay: 0.4, duration: 1 });
+  const [expandedFeature, setExpandedFeature] = useState<string | null>(null);
+  const titleRef = usePremiumScrollAnimation({ animation: 'fadeUp', duration: 1.2 });
+  const featuresRef = usePremiumScrollAnimation({ animation: 'slideUp', stagger: 0.1, delay: 0.3, duration: 1 });
 
   return (
-    <section id="how-it-works" className="relative py-6 lg:py-8 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
+    <section id="how-it-works" className="relative py-20 lg:py-24 bg-black overflow-hidden">
       <SubtleStarBackground density="medium" />
       <SectionConstellation sectionId="how-it-works" />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <SectionSeparator variant="gradient" className="mb-6" />
+          <SectionSeparator variant="gradient" className="mb-12 lg:mb-16" />
           
-          <div ref={headerRef} className="mb-6 lg:mb-8">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 text-left">
-              How Our Agents Work
+          <div ref={titleRef} className="mb-12 lg:mb-16 text-center">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 lg:mb-8 leading-tight">
+              How It Works
             </h2>
-            <p className="text-sm font-medium text-blue-400 mb-3 uppercase tracking-wider">
-              PolstarAI Technology Overview
-            </p>
-            <p className="text-base sm:text-lg text-white/80 max-w-2xl leading-relaxed">
-              PolstarAI agents share a common technical foundation built to make them natural, reliable, and deeply context-aware across industries.
-              While each agent has its own personality and domain logic, they all run on the same core architecture: a blend of reasoning models, retrieval systems, and adaptive interaction layers.
+            <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+              SamyBear combines voice-first interaction, contextual memory, and Socratic teaching methods to create safe, engaging learning experiences for children.
             </p>
           </div>
-
-          <div ref={cardsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6" style={{ opacity: 1 }}>
-            {pillars.map((pillar) => {
-              const Icon = pillar.icon;
+          
+          <div ref={featuresRef} className="space-y-6">
+            {features.map((feature) => {
+              const Icon = feature.icon;
+              const isExpanded = expandedFeature === feature.id;
+              
               return (
                 <div
-                  key={pillar.title}
-                  className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 lg:p-6 hover:bg-white/10 transition-all duration-300 hover:border-white/20"
+                  key={feature.id}
+                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all"
                 >
-                  {/* Icon - consistent sizing */}
-                  <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${pillar.gradient} mb-4`}>
-                    <Icon className="w-5 h-5 text-white" style={{ strokeWidth: 2 }} />
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-2">
-                    {pillar.title}
-                  </h3>
+                  <button
+                    onClick={() => setExpandedFeature(isExpanded ? null : feature.id)}
+                    className="w-full p-6 md:p-8 text-left flex items-start gap-4 hover:bg-white/5 transition-colors"
+                  >
+                    <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 flex items-center justify-center">
+                      <Icon className="w-7 h-7 text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-white/70 leading-relaxed mb-3">
+                        {feature.description}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-blue-400">
+                        <span>{isExpanded ? 'Hide' : 'Show'} details</span>
+                        <span className={`transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                          ↓
+                        </span>
+                      </div>
+                    </div>
+                  </button>
                   
-                  {/* Tagline */}
-                  <p className="text-sm font-medium text-blue-400 mb-3 italic">
-                    {pillar.tagline}
-                  </p>
-
-                  {/* Description */}
-                  <p className="text-sm text-white/70 leading-relaxed">
-                    {pillar.description}
-                  </p>
+                  {isExpanded && (
+                    <div className="px-6 md:px-8 pb-6 md:pb-8 space-y-4 border-t border-white/10 pt-6">
+                      {feature.details.map((detail, detailIndex) => (
+                        <div key={detailIndex} className="bg-white/5 rounded-xl p-4 md:p-6">
+                          <h4 className="text-base md:text-lg font-semibold text-white mb-2">
+                            {detail.subtitle}
+                          </h4>
+                          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mt-3">
+                            <p className="text-sm md:text-base text-blue-200 italic leading-relaxed">
+                              "{detail.example}"
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}

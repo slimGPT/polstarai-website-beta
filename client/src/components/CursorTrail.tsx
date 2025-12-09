@@ -15,11 +15,21 @@ export default function CursorTrail() {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Disable on mobile for better performance
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) return;
+
     const points: TrailPoint[] = [];
     let mouseX = 0;
     let mouseY = 0;
+    let lastUpdate = 0;
+    const throttleMs = 16; // ~60fps
 
     const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastUpdate < throttleMs) return;
+      lastUpdate = now;
+
       mouseX = e.clientX;
       mouseY = e.clientY;
 
@@ -86,10 +96,10 @@ export default function CursorTrail() {
             top: `${point.y}px`,
             width: `${point.size}px`,
             height: `${point.size}px`,
-            transform: 'translate(-50%, -50%)',
+            transform: 'translate3d(-50%, -50%, 0)',
             opacity: point.opacity,
             boxShadow: `0 0 ${point.size * 2}px rgba(255, 255, 255, 0.6)`,
-            transition: 'opacity 0.1s ease-out',
+            willChange: 'opacity, transform',
           }}
         />
       ))}

@@ -7,30 +7,30 @@ import SectionConstellation from './SectionConstellation';
 
 const whyPolstarPoints = [
   {
-    icon: Zap,
-    title: 'Speed',
-    description: 'Deploy new agents in days instead of months. Core intelligence is already built—only domain logic changes.',
+    icon: Shield,
+    title: 'Safety First',
+    description: 'Built with UNICEF\'s child-centred principles, COPPA compliance, and real-time safety filtering to ensure every interaction is age-appropriate and secure.',
     gradient: 'from-blue-500/20 to-blue-400/10',
     iconColor: 'text-blue-400',
   },
   {
     icon: CheckCircle,
-    title: 'Reliability',
-    description: 'Every agent inherits the same proven behavioral engine, ensuring natural, consistent, and safe responses across all domains.',
+    title: 'Developmental Alignment',
+    description: 'Every interaction is designed with educators, aligned with developmental milestones, and adapts to each child\'s unique learning journey.',
     gradient: 'from-cyan-500/20 to-cyan-400/10',
     iconColor: 'text-cyan-400',
   },
   {
-    icon: DollarSign,
-    title: 'Cost Efficiency',
-    description: 'Reusable infrastructure dramatically reduces development costs, enabling sophisticated agents at a fraction of the usual cost.',
+    icon: ShieldCheck,
+    title: 'Parental Control',
+    description: 'Parents maintain full visibility and control through transparent conversation logs, learning goal settings, and privacy controls.',
     gradient: 'from-blue-500/20 to-cyan-400/10',
     iconColor: 'text-blue-400',
   },
   {
-    icon: TrendingUp,
-    title: 'Scalability',
-    description: 'Progress compounds. Each agent improves the system, and every refinement in reasoning, memory, or workflow benefits future agents.',
+    icon: Zap,
+    title: 'Emotional Intelligence',
+    description: 'SamyBear understands context, remembers preferences, and responds with emotional awareness—creating a safe space for children to learn and express themselves.',
     gradient: 'from-cyan-500/20 to-yellow-400/10',
     iconColor: 'text-cyan-400',
   },
@@ -105,7 +105,7 @@ export default function WhyPolstarSection() {
             
             {/* Centered Tagline with Cyan Accent */}
             <p className="text-base sm:text-lg text-cyan-400 italic mb-5 lg:mb-6 text-center max-w-3xl mx-auto">
-              &quot;Your data stays protected, your users stay safe, and your systems stay in control.&quot;
+              &quot;Your child's data stays protected, interactions stay safe, and you stay in control.&quot;
             </p>
             
             {/* 3-Card Responsive Grid */}
@@ -123,7 +123,7 @@ export default function WhyPolstarSection() {
                     Data Protection
                   </h4>
                   <p className="text-xs text-white/80 leading-relaxed">
-                    We apply strict access control, least-privilege principles, and isolated data environments for each agent. Our infrastructure is designed to align with GDPR requirements, including secure processing, auditability, and user-data safeguards.
+                    We apply strict access control, least-privilege principles, and isolated data environments. Our infrastructure is designed to align with COPPA and GDPR-K requirements, including secure processing, auditability, and comprehensive child-data safeguards.
                   </p>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function WhyPolstarSection() {
                     Encrypted Communication
                   </h4>
                   <p className="text-xs text-white/80 leading-relaxed">
-                    All agent interactions use encrypted channels by default. API calls, internal workflows, and external service integrations run over secure protocols to keep sensitive information protected at every step.
+                    All interactions use encrypted channels by default. Voice conversations, learning data, and parent-child communication run over secure protocols to keep sensitive information protected at every step.
                   </p>
                 </div>
               </div>
@@ -156,10 +156,10 @@ export default function WhyPolstarSection() {
                     <ShieldCheck className="w-6 h-6 text-yellow-400" />
                   </div>
                   <h4 className="text-base font-semibold text-white mb-2">
-                    COPPA-Aligned & Enterprise Practices
+                    COPPA & GDPR-K Compliant
                   </h4>
                   <p className="text-xs text-white/80 leading-relaxed">
-                    For agents interacting with minors or handling personal information, we follow COPPA-aligned guidelines, parental-consent workflows, and safe-interaction patterns. Operationally, we adopt enterprise-grade data-handling practices throughout our stack.
+                    We follow COPPA-aligned guidelines, parental-consent workflows, and safe-interaction patterns designed specifically for children. Our data-handling practices meet the highest standards for child privacy and protection.
                   </p>
                 </div>
               </div>
