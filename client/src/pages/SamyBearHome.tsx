@@ -4,7 +4,6 @@ import SamyBearHeader from '@/components/samybear/SamyBearHeader';
 import Footer from '@/components/Footer';
 import SamyBearHeroSection from '@/components/samybear/SamyBearHeroSection';
 import ProblemSection from '@/components/ProblemSection';
-import GenericAILimitationsSection from '@/components/GenericAILimitationsSection';
 import PolstarMissionSection from '@/components/PolstarMissionSection';
 import AgenticAISection from '@/components/AgenticAISection';
 import SamyBearFeaturedSection from '@/components/SamyBearFeaturedSection';
@@ -47,31 +46,27 @@ export default function SamyBearHome() {
         <ProblemSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 3: Why Generic AI Is Not Enough */}
-        <GenericAILimitationsSection />
-        <SectionDivider variant="gradient" className="opacity-20 my-0" />
-        
-        {/* Sec 4: Why PolstarAI Exists */}
+        {/* Sec 3: Why PolstarAI Exists */}
         <PolstarMissionSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 5: Meet SamyBear */}
+        {/* Sec 4: Meet SamyBear */}
         <SamyBearFeaturedSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 6: The Tech Behind It */}
+        {/* Sec 5: The Tech Behind It */}
         <AgenticAISection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 7: How Families Use SamyBear */}
+        {/* Sec 6: How Families Use SamyBear */}
         <FamilyFlowSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 8: Parent Dashboard Preview */}
+        {/* Sec 7: Parent Dashboard Preview */}
         <ParentDashboardPlaceholderSection />
         <SectionDivider variant="gradient" className="opacity-20 my-0" />
         
-        {/* Sec 9: Join the Waitlist */}
+        {/* Sec 8: Join the Waitlist */}
         <ContactSection />
       </main>
       <Footer />
