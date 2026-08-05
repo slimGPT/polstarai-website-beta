@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADAS by PolstarAI - The AI Co-Pilot in Every Driver's Pocket</title>
+<meta name="description" content="ADAS by PolstarAI. Real-time vision, traffic analysis and behavioral prediction, running entirely on the phone already mounted on your windshield.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='20' y='6' rx='5' fill='none' stroke='%239d8cff' stroke-width='3'/%3E%3Cpath d='M11 10h10l-3.5 12h-3z' fill='%239d8cff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Saira+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06070f;
+  --bg-soft:#0a0c16;
+  --panel:#10121f;
+  --line:rgba(205,210,240,.12);
+  --txt:#eef0f8;
+  --txt-dim:rgba(238,240,248,.58);
+  --accent:#9d8cff;
+  --accent-rgb:157,140,255;
+  --amber:#d9a05f;
+  --green:#5fc998;
+  --red:#ef5a50;
+  --blue:#7c9bff;
+  --radius:26px;
+  --nav-h:76px;
+  --disp:'Space Grotesk',sans-serif;
+  --body:'Inter',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --num:'Saira Condensed',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--accent);color:#000}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+
+/* ---------- ambient background ---------- */
+#bgfx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.45;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");}
+main{position:relative;z-index:2}
+
+/* ---------- type ---------- */
+.h-display{font-family:var(--disp);font-weight:700;letter-spacing:-.03em;line-height:.95}
+.eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.body-lg{font-size:clamp(16px,1.35vw,19px);line-height:1.7;color:var(--txt-dim);font-weight:400}
+.num{font-family:var(--num);font-weight:600;letter-spacing:.01em}
+
+/* ---------- preloader ---------- */
+#heroHud{aspect-ratio:1920/886}
+#loader{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.loader-inner{position:relative;text-align:center;width:100%}
+.loader-count{
+  position:absolute;left:4vw;bottom:-16vh;display:flex;align-items:baseline;
+  font-family:var(--num);font-weight:700;font-size:clamp(110px,19vw,280px);line-height:1;
+}
+.loader-count .unit{font-family:var(--mono);font-size:.11em;color:var(--accent);letter-spacing:.14em;margin-left:.25em;font-weight:600}
+.loader-count .digit-col{display:inline-block;height:1em;overflow:hidden;vertical-align:top}
+.loader-count .digit-strip{display:flex;flex-direction:column;transform:translateY(0)}
+.loader-count .digit-strip span{height:1em;line-height:1}
+.loader-title{font-family:var(--disp);font-weight:700;font-size:clamp(42px,7vw,108px);letter-spacing:-.03em;line-height:.98}
+.loader-title .line{display:block;overflow:hidden}
+.loader-title .line em{display:inline-block;font-style:normal;transform:translateY(110%)}
+.loader-scan{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--accent);box-shadow:0 0 24px rgba(var(--accent-rgb),.8);opacity:0;transform:scaleX(0)}
+
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,4vw,56px);transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(8,10,20,.7);backdrop-filter:blur(14px);border-color:var(--line)}
+.logo{font-family:var(--disp);font-weight:700;font-size:23px;letter-spacing:.01em;display:flex;align-items:center;gap:12px}
+.logo .mark{width:30px;height:18px;border:2px solid var(--accent);border-radius:4px;position:relative;box-shadow:0 0 16px rgba(var(--accent-rgb),.45)}
+.logo .mark::after{content:"";position:absolute;left:4px;right:4px;top:4px;bottom:4px;background:var(--accent);clip-path:polygon(35% 100%,65% 100%,100% 0,0 0);opacity:.9}
+.logo small{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.18em;color:var(--txt-dim);align-self:flex-end;margin-bottom:3px}
+.nav-links{display:flex;gap:34px;font-size:14px;font-weight:500;color:var(--txt-dim)}
+.nav-links a{transition:color .25s}
+.nav-links a:hover{color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--txt);color:#000;
+  font-weight:600;font-size:14px;padding:13px 26px;border-radius:100px;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),background .3s}
+.btn:hover{transform:scale(1.05);background:var(--accent)}
+.btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+.btn.ghost:hover{background:rgba(255,255,255,.08)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh;position:relative;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:calc(var(--nav-h) + 4vh) clamp(20px,4vw,56px) 30vh;overflow:hidden}
+.hero-video{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-video video{width:100%;height:100%;object-fit:cover;object-position:50% 72%;opacity:0;transition:opacity 1.2s ease;
+  filter:saturate(1.05) contrast(1.02)}
+.hero-video video.ready{opacity:1}
+.hero-video .poster-fallback{position:absolute;inset:0;background:url('media/hero-poster.jpg') center/cover no-repeat;opacity:.9}
+.hero-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(6,7,15,.82) 0%,rgba(6,7,15,.22) 30%,rgba(6,7,15,.10) 62%,rgba(6,7,15,.30) 86%,rgba(6,7,15,.94) 100%),
+    linear-gradient(100deg,rgba(6,7,15,.55) 0%,rgba(6,7,15,.14) 45%,rgba(6,7,15,0) 70%)}
+.hero-tint{position:absolute;inset:-10% -10% 0;z-index:1;pointer-events:none;
+  background:radial-gradient(60% 42% at 72% 92%,rgba(var(--accent-rgb),.13),transparent 70%),
+             radial-gradient(42% 38% at 20% 98%,rgba(95,201,152,.06),transparent 70%)}
+.hero-head{position:relative;z-index:2}
+.hero h1{font-size:clamp(52px,9.8vw,158px);margin:0 0 3vh}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line em{display:inline-block;font-style:normal;transform:translateY(112%)}
+.hero h1 .thin{font-weight:300}
+.hero-sub{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:28px;position:relative;z-index:2;padding-bottom:3vh}
+.hero-sub p{max-width:480px}
+.hero-cta{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.hero-cta .note{font-size:12px;color:var(--txt-dim)}
+.hero-disclaimer{position:relative;z-index:2;font-size:12px;line-height:1.6;color:var(--txt-dim);
+  max-width:680px;padding:14px 18px;border:1px dashed rgba(238,240,248,.28);border-radius:14px;
+  background:rgba(6,7,15,.55);margin-bottom:4vh}
+.hero-disclaimer .disc-tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--txt);border:1px solid rgba(238,240,248,.35);
+  border-radius:6px;padding:2px 8px;margin-right:10px;vertical-align:1px}
+#witness{padding-top:8vh;background:radial-gradient(70% 50% at 50% 0%,rgba(232,160,95,.07),transparent 70%)}
+.hero-stage{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:22px}
+.hud-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.phone-caption{font-size:clamp(15px,1.5vw,19px);color:var(--txt-dim);text-align:center;max-width:560px;line-height:1.6}
+
+/* ---------- device frame ---------- */
+.hudphone{
+  --hw:min(860px,94vw);
+  width:var(--hw);aspect-ratio:2.05/1;position:relative;
+  border-radius:calc(var(--hw)*.05);
+  background:linear-gradient(145deg,#333a4c,#0e101a 40%,#1d2130);
+  padding:calc(var(--hw)*.011);
+  box-shadow:0 60px 130px -30px rgba(0,0,0,.95),
+    inset 0 0 0 1px rgba(255,255,255,.13),
+    0 0 120px -25px rgba(var(--accent-rgb),.16);
+}
+.hud{position:absolute;inset:calc(var(--hw)*.011);border-radius:calc(var(--hw)*.042);overflow:hidden;background:#06070f}
+.hud .scene{position:absolute;inset:0;width:100%;height:100%}
+
+/* ---------- SVG scene styling ---------- */
+.svglabel{font-family:var(--mono);font-weight:500;letter-spacing:.06em}
+.lane-move{animation:dashmove 1.05s linear infinite}
+@keyframes dashmove{to{stroke-dashoffset:-64}}
+.lane-move.fast{animation-duration:.55s}
+.tl-glow{transition:fill .25s}
+g.braking .tl-glow{fill:#ff3b30 !important;filter:url(#glowR)}
+
+/* ---------- HUD chrome (HTML overlay) ---------- */
+.hud-top{position:absolute;top:4.5%;left:3%;right:3%;display:flex;justify-content:space-between;align-items:flex-start;z-index:6;font-family:var(--mono)}
+.hud-speed{display:flex;align-items:baseline;gap:8px}
+.hud-speed b{font-family:var(--num);font-weight:600;font-size:calc(var(--hw)*.052);line-height:1;letter-spacing:.01em}
+.hud-speed span{font-size:calc(var(--hw)*.0135);color:var(--txt-dim);letter-spacing:.18em}
+.hud-chips{display:flex;gap:8px;margin-top:8px}
+.hud-chip{font-size:calc(var(--hw)*.011);letter-spacing:.14em;padding:3px 9px;border:1px solid var(--line);border-radius:100px;color:var(--txt-dim)}
+.hud-chip.rec{border-color:rgba(239,90,80,.6);color:var(--red)}
+.hud-chip.rec::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:6px;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.limit-badge{width:calc(var(--hw)*.058);height:calc(var(--hw)*.058);border-radius:50%;
+  border:calc(var(--hw)*.0075) solid var(--red);background:#f2f2f2;color:#111;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--num);font-size:calc(var(--hw)*.026);font-weight:700}
+.hud-banner{position:absolute;top:15%;left:50%;transform:translateX(-50%);z-index:7;
+  background:rgba(22,12,2,.9);border:1px solid var(--amber);border-radius:10px;
+  padding:8px 16px;font-family:var(--mono);font-size:calc(var(--hw)*.0145);letter-spacing:.1em;color:var(--amber);
+  white-space:nowrap;opacity:0}
+.hud-banner.crit{border-color:var(--red);color:var(--red);background:rgba(26,5,4,.92)}
+.hud-flash{position:absolute;inset:0;background:rgba(255,45,40,.22);opacity:0;pointer-events:none;z-index:8}
+.hud-note{position:absolute;bottom:4.5%;left:3%;font-family:var(--mono);font-size:calc(var(--hw)*.011);letter-spacing:.16em;color:var(--txt-dim);z-index:6}
+.hud-note i{font-style:normal;color:var(--green)}
+</style>
+</head>
+<body>
+
+<canvas id="bgfx"></canvas>
+<div class="grain"></div>
+
+<!-- shared SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- rear-view car, 120x92 -->
+    <g id="carRear">
+      <ellipse cx="60" cy="88" rx="52" ry="5" fill="rgba(0,0,0,.55)"/>
+      <rect x="14" y="72" width="18" height="14" rx="4" fill="#0a0c10"/>
+      <rect x="88" y="72" width="18" height="14" rx="4" fill="#0a0c10"/>
+      <path d="M10 46 Q10 30 24 27 L36 12 Q40 5 50 5 L70 5 Q80 5 84 12 L96 27 Q110 30 110 46 L110 70 Q110 80 100 80 L20 80 Q10 80 10 70 Z" fill="#2b2621"/>
+      <path d="M10 46 Q10 30 24 27 L36 12 Q40 5 50 5 L70 5 Q80 5 84 12 L96 27 Q110 30 110 46 L110 70 Q110 80 100 80 L20 80 Q10 80 10 70 Z" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+      <path d="M38 13 Q41 8 50 8 L70 8 Q79 8 82 13 L90 26 L30 26 Z" fill="#0d1015"/>
+      <rect x="15" y="48" width="26" height="9" rx="4.5" class="tl-glow" fill="#5c1616"/>
+      <rect x="79" y="48" width="26" height="9" rx="4.5" class="tl-glow" fill="#5c1616"/>
+      <rect x="14" y="62" width="92" height="12" rx="6" fill="#211b15"/>
+      <rect x="47" y="63" width="26" height="10" rx="2" fill="#cfd4da" opacity=".85"/>
+      <text x="60" y="71.5" text-anchor="middle" font-size="7" font-family="monospace" fill="#333">TN 1729</text>
+    </g>
+    <!-- side-view car, 170x64 -->
+    <g id="carSide">
+      <ellipse cx="85" cy="60" rx="78" ry="4" fill="rgba(0,0,0,.5)"/>
+      <path d="M8 42 Q8 30 22 28 L40 26 L58 12 Q62 8 70 8 L110 8 Q118 8 122 13 L134 26 L156 30 Q164 32 164 40 L164 48 Q164 54 156 54 L16 54 Q8 54 8 48 Z" fill="#2a2520"/>
+      <path d="M8 42 Q8 30 22 28 L40 26 L58 12 Q62 8 70 8 L110 8 Q118 8 122 13 L134 26 L156 30 Q164 32 164 40 L164 48 Q164 54 156 54 L16 54 Q8 54 8 48 Z" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="1.5"/>
+      <path d="M62 14 Q65 11 70 11 L106 11 L118 25 L60 25 Z" fill="#0c0f14"/>
+      <circle cx="42" cy="52" r="11" fill="#0b0d11" stroke="#342c24" stroke-width="3"/>
+      <circle cx="130" cy="52" r="11" fill="#0b0d11" stroke="#342c24" stroke-width="3"/>
+      <rect x="158" y="34" width="7" height="6" rx="2" fill="#ffd9a0" opacity=".9"/>
+      <rect x="6" y="36" width="6" height="6" rx="2" class="tl-glow" fill="#5c1616"/>
+    </g>
+    <!-- pedestrian, 34x84 -->
+    <g id="person">
+      <ellipse cx="17" cy="81" rx="12" ry="3" fill="rgba(0,0,0,.5)"/>
+      <circle cx="17" cy="9" r="7" fill="#322b25"/>
+      <path d="M17 17 Q26 18 27 30 L26 48 L21 48 L22 78 L17 78 L16 56 L15 78 L10 78 L11 48 L7 48 Q7 20 17 17 Z" fill="#322b25"/>
+    </g>
+    <!-- CV corner brackets, 100x100, use with preserved stroke -->
+    <g id="brackets" fill="none" stroke-width="2.5" vector-effect="non-scaling-stroke">
+      <path d="M0 22 L0 0 L22 0" vector-effect="non-scaling-stroke"/>
+      <path d="M78 0 L100 0 L100 22" vector-effect="non-scaling-stroke"/>
+      <path d="M100 78 L100 100 L78 100" vector-effect="non-scaling-stroke"/>
+      <path d="M22 100 L0 100 L0 78" vector-effect="non-scaling-stroke"/>
+    </g>
+    <!-- shared scene gradients + glow -->
+    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#090a14"/><stop offset=".8" stop-color="#12141f"/><stop offset="1" stop-color="#1a1c2e"/>
+    </linearGradient>
+    <linearGradient id="roadG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1f2e"/><stop offset="1" stop-color="#12141f"/>
+    </linearGradient>
+    <linearGradient id="carpetGA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="rgba(217,160,95,0)"/>
+      <stop offset="1" stop-color="rgba(217,160,95,.36)"/>
+    </linearGradient>
+    <radialGradient id="hazeG" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="rgba(160,150,255,.12)"/><stop offset="1" stop-color="rgba(160,150,255,0)"/>
+    </radialGradient>
+    <filter id="glowR" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ============ PRELOADER ============ -->
+<div id="loader" aria-hidden="true">
+  <div class="loader-scan" id="loaderScan"></div>
+  <div class="loader-inner">
+    <div class="loader-title h-display">
+      <span class="line"><em>Eyes On</em></span>
+      <span class="line"><em>The Road</em></span>
+    </div>
+  </div>
+  <div class="loader-count">
+    <span class="digit-col"><span class="digit-strip" data-strip="h"><span>0</span><span>0</span><span>0</span><span>1</span><span>1</span></span></span><span class="digit-col"><span class="digit-strip" data-strip="t"><span>0</span><span>3</span><span>6</span><span>0</span><span>2</span></span></span><span class="digit-col"><span class="digit-strip" data-strip="u"><span>0</span><span>4</span><span>2</span><span>5</span><span>0</span></span></span>
+    <span class="unit">KM/H</span>
+  </div>
+</div>
+
+<main>
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <a class="logo" href="#top"><span class="mark"></span>ADAS<small>BY POLSTARAI</small></a>
+  <div class="nav-links">
+    <a href="#vision">Vision Stack</a>
+    <a href="#predict">Prediction</a>
+    <a href="#carpet-sec">Braking Carpet</a>
+    <a href="#offline">Privacy</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="btn" href="#cta">Join the Beta</a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-video" aria-hidden="true">
+    <video id="heroVideo" muted playsinline loop preload="metadata" poster="media/hero-poster.jpg"></video>
+  </div>
+  <div class="hero-scrim"></div>
+  <div class="hero-tint"></div>
+  <div class="hero-head">
+    <h1 class="h-display">
+      <span class="line"><em>The Co-Pilot</em></span>
+      <span class="line"><em><span class="thin">In Your</span> Pocket</em></span>
+    </h1>
+  </div>
+  <div class="hero-sub">
+    <p class="body-lg hero-tagline">Real-time vision. Traffic analysis. Behavioral prediction.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#cta">Join the Closed Beta</a>
+      <span class="note">* Android, v1.6.3. Free during the beta.</span>
+    </div>
+  </div>
+  <div class="hero-disclaimer">
+    <span class="disc-tag">Disclaimer</span> ADAS holds no certification as a driver assistance or collision avoidance system, controls nothing in the vehicle, and never replaces the driver's attention. Alerts can be late or wrong.
+  </div>
+</header>
+
+<!-- ============ WITNESS / FIELD FOOTAGE ============ -->
+<section id="witness">
+  <div class="hero-stage">
+    <div class="hudphone" id="heroHud">
+      <div class="hud">
+        <video id="phoneDemo" class="hud-video" muted loop playsinline preload="none"
+               poster="media/phone-demo-poster.jpg" src="media/phone-demo.mp4"></video>
+      </div>
+    </div>
+    <p class="phone-caption">Because anything can happen on the road and you might need a witness.</p>
+  </div>
+</section>
+
+<style>
+/* ---------- shared shell ---------- */
+section{position:relative;padding:14vh clamp(20px,4vw,56px)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:center}
+.h2{font-size:clamp(44px,6.4vw,104px);margin-bottom:3vh}
+.h2 .line{display:block;overflow:hidden}
+.h2 .line em{display:inline-block;font-style:normal;transform:translateY(112%)}
+.hl-loc{color:var(--accent);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:8px}
+@media(max-width:900px){.split{grid-template-columns:1fr;gap:8vh}}
+
+/* ---------- marquee ---------- */
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;overflow:hidden;white-space:nowrap;background:rgba(8,9,20,.35)}
+.marquee-track{display:inline-flex;gap:60px;will-change:transform}
+.marquee-track span{font-family:var(--mono);font-weight:500;font-size:15px;letter-spacing:.22em;color:var(--txt-dim);display:inline-flex;align-items:center;gap:60px}
+.marquee-track span::after{content:"\25B8";color:var(--accent);font-size:12px}
+
+/* ---------- vision stack (pinned) ---------- */
+#vision{padding:0;background:linear-gradient(180deg,transparent,rgba(8,9,20,.55) 10% 90%,transparent)}
+.vis-pin{min-height:100vh;display:grid;grid-template-columns:1.15fr .85fr;gap:4vw;align-items:center;padding:0 clamp(20px,4vw,56px)}
+@media(max-width:900px){.vis-pin{grid-template-columns:1fr;padding-top:10vh;padding-bottom:10vh}}
+.vis-stage{position:relative;border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;aspect-ratio:10/7;background:#0b0d18}
+.vis-stage svg{width:100%;height:100%;display:block}
+.vis-hdr{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+  padding:12px 18px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--txt-dim);
+  background:linear-gradient(180deg,rgba(6,8,16,.9),rgba(6,8,16,0))}
+.vis-hdr b{color:var(--accent);font-weight:600}
+.vis-copy .step{padding:22px 0;border-top:1px solid var(--line);opacity:.32;transition:opacity .4s}
+.vis-copy .step.active{opacity:1}
+.vis-copy .step h3{font-family:var(--disp);font-weight:700;font-size:23px;letter-spacing:-.02em;margin-bottom:8px;display:flex;gap:14px;align-items:baseline}
+.vis-copy .step h3 .lyr{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.2em}
+.vis-copy .step p{font-size:15px;line-height:1.65;color:var(--txt-dim);max-width:470px}
+.vis-copy .step p code{font-family:var(--mono);font-size:12.5px;color:var(--txt);background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px}
+.tuned{margin-top:4vh;padding:20px 24px;border:1px solid rgba(var(--accent-rgb),.35);border-radius:16px;background:rgba(var(--accent-rgb),.05);max-width:520px}
+.tuned h4{font-family:var(--disp);font-weight:700;font-size:17px;margin-bottom:6px;color:var(--accent)}
+.tuned p{font-size:13.5px;line-height:1.6;color:var(--txt-dim)}
+
+/* ---------- prediction ---------- */
+#predict .diagram{position:relative;height:64vh;min-height:420px;border-radius:var(--radius);
+  border:1px solid var(--line);overflow:hidden;background:radial-gradient(90% 90% at 50% 0%,#1a1530,#08091a 70%),radial-gradient(60% 40% at 50% 100%,rgba(232,160,95,.10),transparent 70%)}
+#predict svg{width:100%;height:100%}
+#predDiagram canvas.gl3d{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+#predDiagram svg.ar3d{position:absolute;inset:0;z-index:2;pointer-events:none}
+#predDiagram.has3d svg.fallback-svg{display:none}
+.scene-sign{position:absolute;right:5%;top:30%;width:clamp(64px,8.5vw,108px);z-index:6;opacity:0;
+  transform:scale(.55) rotate(-8deg);transition:opacity .3s,transform .45s cubic-bezier(.2,.9,.25,1.3);
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.55));pointer-events:none}
+.scene-sign.on{opacity:1;transform:scale(1) rotate(0deg)}
+.dg-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;fill:var(--txt-dim)}
+.dg-label.hot{fill:var(--amber)}
+
+/* ---------- braking carpet ---------- */
+#carpet-sec{padding:0;background:linear-gradient(180deg,transparent,rgba(8,9,20,.55) 10% 90%,transparent)}
+.carpet-pin{min-height:100vh;display:grid;grid-template-columns:.9fr 1.1fr;gap:4vw;align-items:center;padding:0 clamp(20px,4vw,56px)}
+@media(max-width:900px){.carpet-pin{grid-template-columns:1fr;padding-top:12vh;padding-bottom:12vh}}
+.carpet-stage{position:relative;height:62vh;min-height:400px;border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;background:#06070f}
+.carpet-stage canvas.gl3d{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.carpet-stage svg{position:relative;z-index:2;width:100%;height:100%;display:block}
+.carpet-stage.has3d #svgScenery,.carpet-stage.has3d #svgVignette,.carpet-stage.has3d #carpetLeadG{display:none}
+.gl3d-chip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--txt-dim);border:1px solid var(--line);padding:8px 14px;border-radius:100px;z-index:3;background:rgba(8,10,20,.7)}
+.carpet-readout{position:absolute;top:6%;left:6%;font-family:var(--mono);z-index:5}
+.carpet-readout .spd{font-family:var(--num);font-weight:700;font-size:clamp(46px,5.5vw,84px);line-height:1;letter-spacing:.01em}
+.carpet-readout .spd span{font-family:var(--mono);font-size:12px;color:var(--txt-dim);letter-spacing:.18em;margin-left:8px}
+.carpet-readout .dist{font-size:13px;letter-spacing:.1em;margin-top:10px;color:var(--cstate,#5fc998)}
+.carpet-state{position:absolute;top:6%;right:6%;font-family:var(--mono);font-size:12px;letter-spacing:.16em;
+  padding:6px 14px;border-radius:100px;border:1px solid var(--cstate,#5fc998);color:var(--cstate,#5fc998);z-index:5}
+.carpet-copy .step{padding:22px 0;border-top:1px solid var(--line);opacity:.32;transition:opacity .4s}
+.carpet-copy .step.active{opacity:1}
+.carpet-copy .step h3{font-family:var(--disp);font-weight:700;font-size:23px;letter-spacing:-.02em;margin-bottom:8px;display:flex;gap:12px;align-items:center}
+.carpet-copy .step h3 .swatch{width:14px;height:14px;border-radius:4px;flex-shrink:0}
+.carpet-copy .step p{font-size:15px;line-height:1.65;color:var(--txt-dim);max-width:460px}
+
+/* ---------- recording ---------- */
+#recording .timeline{margin-top:7vh;border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(180deg,#10121f,#0b0d16);padding:clamp(22px,3vw,46px)}
+.tl-hd{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--txt-dim);margin-bottom:18px;display:flex;justify-content:space-between}
+.tl-hd b{color:var(--green);font-weight:600}
+.seg-row{display:flex;gap:12px;align-items:stretch;height:82px}
+.seg{flex:1;border-radius:14px;background:linear-gradient(180deg,#171a28,#10121c);border:1px solid var(--line);position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;padding:12px 14px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--txt)}
+.seg small{color:var(--txt-dim);margin-left:8px}
+.seg .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(95,201,152,.12);border-right:2px solid rgba(95,201,152,.6)}
+.seg.old{opacity:.4}
+.seg.old::after{content:"OLDEST DELETED";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10.5px;letter-spacing:.18em;color:var(--red)}
+.clipmark{position:absolute;top:0;bottom:0;width:15%;left:56%;
+  background:rgba(217,160,95,.18);border-left:2px solid var(--amber);border-right:2px solid var(--amber);
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--amber);letter-spacing:.12em;
+  transform:scaleX(0);transform-origin:center}
+.clip-out{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
+.clip-card{border:1px solid rgba(217,160,95,.5);background:rgba(217,160,95,.06);border-radius:14px;
+  padding:14px 20px;font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;color:var(--amber);
+  display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(20px);
+  box-shadow:0 0 30px -12px rgba(217,160,95,.35)}
+.clip-card i{font-style:normal;font-size:15px}
+.clip-card span{color:var(--txt-dim)}
+.rec-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:2vw;margin-top:6vh}
+@media(max-width:900px){.rec-notes{grid-template-columns:1fr}}
+.rec-note{border-top:1px solid var(--line);padding-top:20px}
+.rec-note h3{font-family:var(--disp);font-weight:700;font-size:19px;margin-bottom:8px}
+.rec-note p{font-size:14px;line-height:1.65;color:var(--txt-dim)}
+
+/* ---------- offline / zero ---------- */
+#offline{text-align:center;overflow:hidden}
+#offline .zero{font-family:var(--num);font-weight:700;font-size:clamp(150px,30vw,460px);line-height:.82;letter-spacing:0;
+  background:linear-gradient(180deg,#fff 15%,#d0a8a5 55%,rgba(232,160,95,.25));-webkit-background-clip:text;background-clip:text;color:transparent;
+  position:relative;display:inline-block}
+#offline .zsub{display:block;font-family:var(--mono);font-size:clamp(12px,1.4vw,17px);letter-spacing:.32em;color:var(--accent);margin-top:1vh}
+#offline p{max-width:640px;margin:4vh auto 0}
+.pipe-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:5vh;font-family:var(--mono)}
+.pipe-chips .chip{font-size:12px;letter-spacing:.14em;padding:9px 16px;border:1px solid var(--line);border-radius:100px;color:var(--txt)}
+.pipe-chips .chip.on{border-color:rgba(95,201,152,.55);color:var(--green)}
+.pipe-chips .cloud{position:relative;color:var(--txt-dim);border-style:dashed}
+.pipe-chips .cloud::after{content:"";position:absolute;left:8%;right:8%;top:50%;height:2px;background:var(--red);transform:rotate(-8deg)}
+
+/* ---------- drivers horizontal ---------- */
+#drivers{padding:0}
+.ind-pin{height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.ind-head{padding:0 clamp(20px,4vw,56px) 5vh}
+.ind-track{display:flex;gap:2.5vw;padding:0 clamp(20px,4vw,56px);will-change:transform}
+.ind-card{flex:0 0 auto;width:min(460px,78vw);aspect-ratio:587/560;border-radius:var(--radius);
+  position:relative;overflow:hidden;border:1px solid var(--line);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:28px}
+.ind-card::before{content:"";position:absolute;inset:0;background:var(--grad)}
+.ind-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.8))}
+.ind-card .lbl{position:relative;z-index:2;font-family:var(--disp);font-weight:700;font-size:27px;letter-spacing:-.02em;margin-bottom:8px}
+.ind-card .why{position:relative;z-index:2;font-size:14px;line-height:1.6;color:var(--txt-dim)}
+.ind-card .glyph{position:absolute;top:24px;right:26px;font-size:50px;opacity:.4;z-index:2}
+.ind-card[data-i="1"]{--grad:radial-gradient(90% 90% at 30% 20%,#2a1f3f,#0b0916 70%)}
+.ind-card[data-i="2"]{--grad:radial-gradient(90% 90% at 70% 25%,#142038,#0a0d1a 70%)}
+.ind-card[data-i="3"]{--grad:radial-gradient(90% 90% at 40% 70%,#241a3f,#0b0916 70%)}
+.ind-card[data-i="4"]{--grad:radial-gradient(90% 90% at 60% 30%,#3a2030,#0c0d1c 70%)}
+.ind-card[data-i="5"]{--grad:radial-gradient(90% 90% at 50% 40%,#33272a,#0a0b14 70%)}
+
+/* ---------- features pin ---------- */
+#features{padding:0;background:linear-gradient(180deg,transparent,rgba(8,9,20,.55) 10% 90%,transparent)}
+.feat-pin{min-height:100vh;display:grid;grid-template-columns:.9fr 1.1fr;gap:4vw;align-items:center;padding:0 clamp(20px,4vw,56px)}
+@media(max-width:900px){.feat-pin{grid-template-columns:1fr;padding-top:10vh;padding-bottom:10vh}.feat-stage{order:-1}}
+.feat-item{padding:24px 0;border-top:1px solid var(--line);opacity:.32;transition:opacity .4s}
+.feat-item.active{opacity:1}
+.feat-item h3{font-family:var(--disp);font-weight:700;font-size:24px;letter-spacing:-.02em;margin-bottom:9px;display:flex;align-items:center;gap:14px}
+.feat-item h3 .idx{font-size:10.5px;font-family:var(--mono);font-weight:600;color:var(--accent);letter-spacing:.2em}
+.feat-item p{font-size:15px;line-height:1.65;color:var(--txt-dim);max-width:480px}
+.feat-stage{display:flex;justify-content:center}
+.feat-stage .hudphone{--hw:min(600px,46vw)}
+@media(max-width:900px){.feat-stage .hudphone{--hw:min(600px,90vw)}}
+.hud-face{position:absolute;inset:0;opacity:0}
+.hud-face.is-active{opacity:1}
+.face-clips{padding:calc(var(--hw)*.05);display:flex;flex-direction:column;gap:calc(var(--hw)*.017);font-family:var(--mono)}
+.face-clips .hd{font-size:calc(var(--hw)*.016);letter-spacing:.22em;color:var(--txt-dim);margin-bottom:calc(var(--hw)*.008)}
+.cliprow{display:flex;align-items:center;gap:calc(var(--hw)*.02);border:1px solid var(--line);border-radius:10px;padding:calc(var(--hw)*.014) calc(var(--hw)*.02);font-size:calc(var(--hw)*.0155)}
+.cliprow.ev{border-color:rgba(217,160,95,.55);color:var(--amber);background:rgba(217,160,95,.05)}
+.cliprow .len{margin-left:auto;color:var(--txt-dim)}
+.cliprow.ev .len{color:var(--amber)}
+.face-profile{padding:calc(var(--hw)*.05);font-family:var(--mono)}
+.face-profile .state{font-family:var(--disp);font-weight:700;font-size:calc(var(--hw)*.06);letter-spacing:-.02em;color:var(--green)}
+.face-profile .sc{font-size:calc(var(--hw)*.015);letter-spacing:.2em;color:var(--txt-dim);margin-bottom:calc(var(--hw)*.028)}
+.dim{margin-bottom:calc(var(--hw)*.019)}
+.dim .lb{display:flex;justify-content:space-between;font-size:calc(var(--hw)*.0145);letter-spacing:.12em;color:var(--txt-dim);margin-bottom:5px}
+.dim .lb b{color:var(--txt);font-weight:600;font-family:var(--num);font-size:calc(var(--hw)*.02)}
+.dim .bar{height:5px;border-radius:100px;background:rgba(255,255,255,.08);overflow:hidden}
+.dim .bar i{display:block;height:100%;width:0;border-radius:100px;background:linear-gradient(90deg,var(--green),var(--amber))}
+.face-map{background:radial-gradient(40% 50% at 70% 30%,rgba(95,201,152,.06),transparent 70%),#0e1020}
+.face-map .streets{position:absolute;inset:0;opacity:.5;
+  background:linear-gradient(90deg,transparent 48%,rgba(255,255,255,.12) 49% 51%,transparent 52%) 0 0/34% 100%,
+             linear-gradient(transparent 46%,rgba(255,255,255,.10) 47% 49%,transparent 50%) 0 0/100% 40%}
+.face-map .route{position:absolute;left:12%;bottom:10%;width:70%;height:70%}
+.face-map .eta{position:absolute;top:8%;left:6%;font-family:var(--mono);font-size:calc(var(--hw)*.017);letter-spacing:.1em}
+.face-map .eta b{color:var(--blue)}
+.face-map .off{position:absolute;bottom:8%;left:6%;font-family:var(--mono);font-size:calc(var(--hw)*.013);letter-spacing:.16em;color:var(--green)}
+.face-map .carmk{position:absolute;left:18%;bottom:14%;width:calc(var(--hw)*.028);height:calc(var(--hw)*.048);background:var(--accent);border-radius:30%/20%;box-shadow:0 0 14px rgba(var(--accent-rgb),.7)}
+
+/* ---------- alert catalog ---------- */
+#alerts{padding-left:0;padding-right:0;overflow:hidden}
+#alerts .eyebrow,#alerts .h2,#alerts .body-lg{padding-left:clamp(20px,4vw,56px);padding-right:clamp(20px,4vw,56px)}
+#alerts .h2{max-width:1150px;font-size:clamp(34px,4.8vw,70px);line-height:1.08}
+.al-rows{margin-top:7vh;display:flex;flex-direction:column;gap:2vw}
+.al-row{display:flex;gap:2vw;width:max-content;will-change:transform}
+.al-card{width:min(430px,80vw);flex:0 0 auto;border:1px solid var(--line);border-radius:20px;background:var(--panel);padding:22px 26px}
+.al-card .nm{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.al-card .nm::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.al-card .nm.crit{color:var(--red)}.al-card .nm.crit::before{background:var(--red);box-shadow:0 0 10px var(--red)}
+.al-card .nm.soft{color:var(--txt-dim)}.al-card .nm.soft::before{background:var(--txt-dim);box-shadow:none}
+.al-card p{font-size:14px;line-height:1.62;color:rgba(240,234,228,.75)}
+.al-card p b{color:var(--txt);font-weight:600}
+
+/* ---------- FAQ ---------- */
+#faq{background:linear-gradient(180deg,transparent,rgba(8,9,20,.5) 12% 100%);overflow:hidden;padding-left:0;padding-right:0}
+.faq-marq{white-space:nowrap;overflow:hidden;margin-bottom:8vh}
+.faq-marq .mtrack{display:inline-flex;will-change:transform}
+.faq-marq span{font-family:var(--disp);font-weight:700;letter-spacing:-.03em;
+  font-size:clamp(64px,12vw,180px);line-height:1;padding-right:6vw;
+  color:transparent;-webkit-text-stroke:1px rgba(240,234,228,.28)}
+.faq-marq span:nth-child(even){color:var(--txt);-webkit-text-stroke:0}
+.faq-body{display:grid;grid-template-columns:1fr 1.2fr;gap:5vw;padding:0 clamp(20px,4vw,56px)}
+@media(max-width:900px){.faq-body{grid-template-columns:1fr}}
+.faq-intro p{margin-bottom:3vh}
+.acc{border-top:1px solid var(--line)}
+.acc-item{border-bottom:1px solid var(--line)}
+.acc-q{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding:26px 4px;text-align:left;font-family:var(--disp);font-weight:600;
+  font-size:clamp(18px,1.7vw,23px);letter-spacing:-.01em;color:var(--txt)}
+.acc-q .plus{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-family:var(--body);
+  transition:transform .4s cubic-bezier(.2,.8,.2,1),background .3s}
+.acc-item.open .plus{transform:rotate(45deg);background:var(--accent);color:#000;border-color:var(--accent)}
+.acc-a{height:0;overflow:hidden}
+.acc-a p{padding:0 4px 26px;font-size:15px;line-height:1.7;color:var(--txt-dim);max-width:540px}
+
+/* ---------- footer CTA ---------- */
+#cta{min-height:88vh;display:flex;flex-direction:column;justify-content:center;
+  background:radial-gradient(55% 55% at 50% 110%,rgba(var(--accent-rgb),.13),transparent 70%),radial-gradient(40% 40% at 85% 100%,rgba(232,160,95,.08),transparent 70%);border-top:1px solid var(--line)}
+#cta .inner{display:grid;grid-template-columns:1.3fr .7fr;gap:6vw;align-items:center}
+@media(max-width:900px){#cta .inner{grid-template-columns:1fr}}
+#cta .h2{font-size:clamp(46px,7.6vw,124px)}
+#cta .stores{display:flex;gap:14px;margin-top:4vh;flex-wrap:wrap}
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.qr{width:min(220px,60vw);aspect-ratio:1;border-radius:20px;background:#fff;padding:14px;display:block;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.qr:hover{transform:scale(1.04);box-shadow:0 0 40px -8px rgba(var(--accent-rgb),.5)}
+.qr img{width:100%;height:100%;object-fit:contain}
+.qr-wrap p{font-size:13px;color:var(--txt-dim);text-align:center;line-height:1.5}
+footer{border-top:1px solid var(--line);padding:6vh clamp(20px,4vw,56px);
+  display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;font-size:13.5px;color:var(--txt-dim)}
+footer .cols{display:flex;gap:8vw;flex-wrap:wrap}
+footer .col{display:flex;flex-direction:column;gap:12px}
+footer .col a:hover{color:var(--txt)}
+footer .fine{width:100%;margin-top:5vh;padding-top:3vh;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;line-height:1.6}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="marquee">
+  <div class="marquee-track" id="marq1">
+    <span>DETECT</span><span>TRACK</span><span>DECIDE</span><span>ADVISE</span><span>RECORD</span><span>DEBRIEF</span>
+    <span>DETECT</span><span>TRACK</span><span>DECIDE</span><span>ADVISE</span><span>RECORD</span><span>DEBRIEF</span>
+  </div>
+</div>
+
+<!-- ============ VISION STACK ============ -->
+<section id="vision">
+  <div class="vis-pin" id="visPin">
+    <div class="vis-stage">
+      <div class="vis-hdr"><span>FRAME 04:31:22.4 &#183; 640PX &#183; INT8</span><span id="visLayerTag"><b>LAYER 1</b> / DETECTION</span></div>
+      <svg viewBox="0 0 800 560" preserveAspectRatio="xMidYMid slice">
+        <g id="visScenery">
+        <rect width="800" height="560" fill="#0d0f18"/>
+        <!-- simple road context -->
+        <rect y="250" width="800" height="310" fill="#10121c"/>
+        <polygon points="345,252 455,252 700,560 100,560" fill="#181c28"/>
+        <line x1="345" y1="252" x2="100" y2="560" stroke="rgba(240,234,228,.22)" stroke-width="2.5"/>
+        <line x1="455" y1="252" x2="700" y2="560" stroke="rgba(240,234,228,.22)" stroke-width="2.5"/>
+        <line x1="400" y1="252" x2="400" y2="560" stroke="rgba(240,234,228,.3)" stroke-width="3.5" stroke-dasharray="20 30" class="lane-move"/>
+        <!-- actors -->
+        <use href="#carRear" transform="translate(340,290) scale(1.0)"/>
+        <use href="#carRear" transform="translate(150,270) scale(.62)"/>
+        <use href="#carSide" transform="translate(560,300) scale(.85)"/>
+        <use href="#person" transform="translate(96,360) scale(.85)"/>
+
+        <!-- base brackets, always visible under overlays -->
+        <g id="visBrackets">
+          <g stroke="#5fc998"><use href="#brackets" transform="translate(336,286) scale(1.24,.96)"/></g>
+          <g stroke="#5fc998"><use href="#brackets" transform="translate(147,266) scale(.78,.61)"/></g>
+          <g stroke="#5fc998"><use href="#brackets" transform="translate(556,296) scale(1.5,.58)"/></g>
+          <g stroke="#5fc998"><use href="#brackets" transform="translate(90,354) scale(.42,.78)"/></g>
+        </g>
+
+        </g>
+        <!-- LAYER 1 overlay: raw detections -->
+        <g id="visL1">
+          <g class="svglabel" font-size="13" fill="#5fc998">
+            <text x="398" y="276">CAR 0.96</text>
+            <text x="152" y="256">CAR 0.83</text>
+            <text x="600" y="286">CAR 0.91</text>
+            <text x="88" y="344">PERSON 0.88</text>
+            <text x="24" y="536" fill="rgba(240,234,228,.4)">BOXES + CLASSES + CONFIDENCE &#183; NO MEMORY, NO MOTION</text>
+          </g>
+        </g>
+
+        <!-- LAYER 2 overlay: identity + motion -->
+        <g id="visL2" opacity="0">
+          <g class="svglabel" font-size="13">
+            <text x="398" y="276" fill="#5fc998">#7 CAR &#916;A +0.42/S</text>
+            <text x="152" y="256" fill="#5fc998">#3 CAR &#916;A -0.05/S</text>
+            <text x="600" y="286" fill="#d9a05f">#12 CAR VX 0.31/S &#8592;</text>
+            <text x="88" y="344" fill="#5fc998">#9 PERSON VX 0.08/S</text>
+          </g>
+          <!-- motion vectors -->
+          <g stroke-width="3" fill="none" marker-end="none">
+            <line x1="620" y1="330" x2="540" y2="336" stroke="#d9a05f"/>
+            <polygon points="540,336 554,329 554,343" fill="#d9a05f"/>
+            <line x1="400" y1="392" x2="400" y2="428" stroke="#5fc998"/>
+            <polygon points="400,428 393,414 407,414" fill="#5fc998"/>
+          </g>
+          <!-- trails -->
+          <g fill="#d9a05f" opacity=".7">
+            <circle cx="700" cy="326" r="3.5"/><circle cx="676" cy="327" r="3"/><circle cx="652" cy="328" r="2.5"/>
+          </g>
+          <!-- zones -->
+          <g class="svglabel" font-size="11.5" fill="rgba(240,234,228,.45)">
+            <text x="215" y="500">LEFT</text><text x="382" y="500">MY_LANE</text><text x="545" y="500">RIGHT</text>
+            <text x="24" y="536">IDENTITY ACROSS FRAMES &#183; 900 MS HISTORY PER TRACK</text>
+          </g>
+          <line x1="300" y1="252" x2="215" y2="560" stroke="rgba(217,160,95,.25)" stroke-width="2" stroke-dasharray="6 8"/>
+          <line x1="500" y1="252" x2="585" y2="560" stroke="rgba(217,160,95,.25)" stroke-width="2" stroke-dasharray="6 8"/>
+        </g>
+
+        <!-- LAYER 3 overlay: decision -->
+        <g id="visL3" opacity="0">
+          <rect width="800" height="560" fill="rgba(5,7,14,.72)"/>
+          <g class="l3extras">
+            <g stroke="#d9a05f"><use href="#brackets" transform="translate(336,286) scale(1.24,.96)"/></g>
+            <use href="#carRear" transform="translate(340,290) scale(1.0)" opacity="1"/>
+          </g>
+          <g font-size="13.5" class="svglabel">
+            <rect x="180" y="80" width="440" height="150" rx="14" fill="rgba(8,9,18,.94)" stroke="#d9a05f" stroke-width="1.4"/>
+            <text x="204" y="112" fill="#d9a05f">TRACK #7 &#183; MY_LANE &#183; RADIAL</text>
+            <text x="204" y="140" fill="#f0eae4">TTC 2.0S &lt; GATE 2.2S</text>
+            <text x="204" y="166" fill="#f0eae4">CONFIRMED 2/2 PASSES &#183; COOLDOWN CLEAR</text>
+            <text x="204" y="204" fill="#d9a05f" font-size="16" font-weight="600">&#8594; FORWARD_CLOSING &#183; RISK 63%</text>
+            <text x="24" y="536" fill="rgba(240,234,228,.4)">THRESHOLD RULES ON MEASURED STATE &#183; EVERY NUMBER READABLE</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="vis-copy">
+      <span class="eyebrow">The vision stack</span>
+      <h2 class="h2 h-display" style="font-size:clamp(36px,4.8vw,76px)">
+        <span class="line"><em>3 Layers of</em></span>
+        <span class="line"><em>Protection</em></span>
+      </h2>
+      <div class="step active" data-step="0">
+        <h3><span class="lyr">L1</span>Detection</h3>
+        <p>Each frame, <code>YOLO11n</code> answers one question: what is visible and where. Boxes, classes and confidences, ten times per second, entirely on the phone.</p>
+      </div>
+      <div class="step" data-step="1">
+        <h3><span class="lyr">L2</span>Tracking</h3>
+        <p>Detections gain identity across frames by box overlap. Once a box becomes track #7, change becomes measurable: growth rate, sideways slide, lane zone, 900 ms of motion history. A detected car becomes a measured, moving object.</p>
+      </div>
+      <div class="step" data-step="2">
+        <h3><span class="lyr">L3</span>Decision</h3>
+        <p>Pure arithmetic on tracker state plus telemetry. TTC gates, crossing-time prediction, consecutive-frame confirmation, per-track cooldowns. No machine learning at this layer: every threshold is a plain number that can be read, audited and tuned.</p>
+      </div>
+      <div class="tuned">
+        <h4>Tuned for roads that follow no textbook</h4>
+        <p>The model is adapted to where it actually drives: hard examples from Tunisian traffic are annotated and fed back into training, and every alert threshold was recalibrated from logged field drives.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CROSSING PREDICTION ============ -->
+<section id="predict">
+  <div class="split">
+    <div>
+      <span class="eyebrow">Lateral-threat prediction</span>
+      <h2 class="h2 h-display">
+        <span class="line"><em>Predicts cut-offs</em></span>
+        <span class="line"><em>before they happen</em></span>
+      </h2>
+      <p class="body-lg">Most dangerous moments in city traffic start beside you, not ahead of you: the cut-off, the intersection lunge, the sudden swerve. Here is how the app sees it coming. It follows every car around you frame by frame and measures its sideways speed. When a car starts sliding toward your lane, it calculates how many seconds that car needs to cross into your path. If that number gets short, the alert fires while the car is still beside you, not after it is already in front of you. The rule was written from real close calls and tuned on logged field drives.</p>
+    </div>
+    <div class="diagram" id="predDiagram">
+      <img id="crossSign" class="scene-sign" src="media/signs/cross_traffic.png" alt="Cross-traffic warning sign">
+      <svg class="fallback-svg" viewBox="0 0 600 500" preserveAspectRatio="xMidYMid meet">
+        <polygon points="240,60 360,60 470,500 130,500" fill="rgba(95,201,152,.05)" stroke="rgba(95,201,152,.35)" stroke-width="1.5" stroke-dasharray="6 6"/>
+        <text x="300" y="480" text-anchor="middle" class="dg-label">MY CORRIDOR</text>
+        <g id="egoCar"><use href="#carRear" transform="translate(252,392) scale(.8)"/></g>
+        <g id="crossCar"><use href="#carSide" transform="translate(-30,168) scale(.75)"/></g>
+        <line id="predLine" x1="110" y1="196" x2="300" y2="196" stroke="#d9a05f" stroke-width="2" stroke-dasharray="8 7" opacity="0"/>
+        <circle id="predPoint" cx="300" cy="196" r="7" fill="none" stroke="#d9a05f" stroke-width="2" opacity="0"/>
+        <text id="predLbl" x="205" y="182" text-anchor="middle" class="dg-label hot" opacity="0">T-CROSS 1.4S</text>
+        <text id="vxLbl" x="52" y="248" class="dg-label hot" opacity="0">VX 0.31/S</text>
+        <g id="predAlert" opacity="0">
+          <rect x="160" y="66" width="280" height="42" rx="10" fill="rgba(20,12,2,.94)" stroke="#d9a05f"/>
+          <text x="300" y="92" text-anchor="middle" class="dg-label hot" style="font-size:14px">CUTTING ACROSS &#9666; ALERT FIRED</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAKING CARPET ============ -->
+<section id="carpet-sec">
+  <div class="carpet-pin" id="carpetPin">
+    <div class="carpet-copy">
+      <span class="eyebrow">The braking carpet</span>
+      <h2 class="h2 h-display" style="font-size:clamp(34px,4.6vw,72px)">
+        <span class="line"><em>You can finally visualise</em></span>
+        <span class="line"><em>your stopping distances</em></span>
+      </h2>
+      <div class="step active" data-step="0">
+        <h3><span class="swatch" style="background:var(--green)"></span>Green, road clear</h3>
+        <p>After a one-time calibration, the app projects the car's current stopping distance onto the road as a translucent zone. It grows with speed and shows its reach in meters, so a number every driver underestimates stays permanently in view.</p>
+      </div>
+      <div class="step" data-step="1">
+        <h3><span class="swatch" style="background:var(--amber)"></span>Amber, lead inside the zone</h3>
+        <p>The moment the vehicle ahead stands inside your projected stopping distance, the carpet turns amber. Nothing beeps yet. You simply see that the margin is gone.</p>
+      </div>
+      <div class="step" data-step="2">
+        <h3><span class="swatch" style="background:var(--red)"></span>Red, time is short</h3>
+        <p>Inside the zone with a short time-to-contact, the carpet turns red, and if brake lights flare ahead, the six-beep rear-end advisory fires with a double screen flash. The check runs independently of every other alert so it can never be crowded out.</p>
+      </div>
+    </div>
+    <div class="carpet-stage">
+      <img id="brakeSign" class="scene-sign" src="media/signs/brake_ahead.png" alt="Brake-ahead warning sign">
+      <svg viewBox="0 0 900 560" preserveAspectRatio="xMidYMid slice" id="carpetScene">
+        <defs>
+          <linearGradient id="cgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(95,201,152,0)"/><stop offset="1" stop-color="rgba(95,201,152,.36)"/></linearGradient>
+          <linearGradient id="cgA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(217,160,95,0)"/><stop offset="1" stop-color="rgba(217,160,95,.38)"/></linearGradient>
+          <linearGradient id="cgR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(239,90,80,0)"/><stop offset="1" stop-color="rgba(239,90,80,.40)"/></linearGradient>
+        </defs>
+        <g id="svgScenery">
+        <rect width="900" height="560" fill="url(#skyG)"/>
+        <g opacity=".45" fill="#1a1410">
+          <rect x="40" y="180" width="60" height="60"/><rect x="120" y="160" width="42" height="80"/>
+          <rect x="720" y="168" width="70" height="72"/><rect x="810" y="146" width="40" height="94"/>
+        </g>
+        <ellipse cx="450" cy="242" rx="380" ry="55" fill="url(#hazeG)"/>
+        <rect y="240" width="900" height="320" fill="#0e101b"/>
+        <polygon points="396,242 504,242 830,560 70,560" fill="url(#roadG)"/>
+        <line x1="396" y1="242" x2="70" y2="560" stroke="rgba(235,240,246,.35)" stroke-width="3"/>
+        <line x1="504" y1="242" x2="830" y2="560" stroke="rgba(235,240,246,.35)" stroke-width="3"/>
+        <line class="lane-move" id="carpetDash1" x1="428" y1="242" x2="290" y2="560" stroke="rgba(235,240,246,.5)" stroke-width="5" stroke-dasharray="26 38"/>
+        <line class="lane-move" id="carpetDash2" x1="472" y1="242" x2="610" y2="560" stroke="rgba(235,240,246,.5)" stroke-width="5" stroke-dasharray="26 38"/>
+        </g>
+        <g id="bigCarpetG">
+          <polygon id="bigCarpetPoly" points="428,330 472,330 560,548 340,548" fill="url(#cgG)"/>
+          <line id="bigCarpetEdge" x1="428" y1="330" x2="472" y2="330" stroke="#5fc998" stroke-width="4" filter="url(#glowR)"/>
+          <text id="bigMeters" x="450" y="512" text-anchor="middle" class="svglabel" font-size="15" fill="#5fc998">STOP ZONE 14 M</text>
+        </g>
+        <g id="carpetLeadG">
+          <use href="#carRear" id="carpetLeadCar"/>
+          <g id="carpetLeadBr" stroke="#5fc998"><use href="#brackets" transform="scale(1.2,.92)"/></g>
+          <g font-size="13" class="svglabel">
+            <rect x="-4" y="-27" width="150" height="20" rx="4" fill="rgba(8,9,18,.85)" stroke="#5fc998" stroke-width="1" id="carpetTagBox"/>
+            <text x="71" y="-12.5" text-anchor="middle" fill="#5fc998" id="carpetLeadTag">CAR TTC 5.2S</text>
+          </g>
+        </g>
+        <polygon id="svgVignette" points="0,560 900,560 900,522 450,546 0,522" fill="#070812"/>
+        <g id="arOverlay" style="display:none">
+          <path class="arbr" fill="none" stroke="#5fc998" stroke-width="2.5" d="M0 0"/>
+          <path class="arbr" fill="none" stroke="#5fc998" stroke-width="2.5" d="M0 0"/>
+          <path class="arbr" fill="none" stroke="#5fc998" stroke-width="2.5" d="M0 0"/>
+          <path class="arbr" fill="none" stroke="#5fc998" stroke-width="2.5" d="M0 0"/>
+          <rect id="arTagBox" width="168" height="20" rx="4" fill="rgba(8,9,18,.85)" stroke="#5fc998" stroke-width="1"/>
+          <text id="arTagText" text-anchor="middle" font-size="13" class="svglabel" fill="#5fc998">CAR TTC 5.2S</text>
+        </g>
+      </svg>
+      <div class="carpet-readout">
+        <div class="spd"><span id="carpetSpeed">28</span><span>KM/H</span></div>
+        <div class="dist" id="carpetDist">STOPPING DISTANCE 14 M</div>
+      </div>
+      <div class="carpet-state" id="carpetState">CLEAR</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECORDING ============ -->
+<section id="recording">
+  <span class="eyebrow">Recording</span>
+  <h2 class="h2 h-display" style="font-size:clamp(34px,5.2vw,84px)">
+    <span class="line"><em>All your clips are safely</em></span>
+    <span class="line"><em>recorded <span class="hl-loc">locally</span></em></span>
+  </h2>
+  <p class="body-lg" style="max-width:640px">Recording writes in 5-minute self-contained chunks from the first second of every session. A crash, a dead battery, or the system killing the app costs at most five minutes of footage, never the whole trip. When storage hits the cap, the oldest segment quietly makes room for the newest. Everything stays on your phone, in your own gallery.</p>
+  <div class="timeline" id="recTimeline">
+    <div class="tl-hd"><span>LOOP RECORDER &#183; CAP 2 GB &#183; 5-MIN SEGMENTS</span><span><b>&#9679; REC</b> SESSION 00:17:42</span></div>
+    <div class="seg-row">
+      <div class="seg old">SEG 01</div>
+      <div class="seg"><div class="fill" style="width:100%"></div>SEG 02<small>5:00</small></div>
+      <div class="seg"><div class="fill" style="width:100%"></div>SEG 03<small>5:00</small></div>
+      <div class="seg" style="position:relative">
+        <div class="fill" style="width:72%"></div>
+        <div class="clipmark" style="transform:scaleX(1)">EVENT</div>
+        SEG 04<small>REC</small>
+      </div>
+    </div>
+    <div class="clip-out">
+      <div class="clip-card" id="clipCard1"><i>&#9654;</i>CROSS_TRAFFIC_1732.mp4<span>15s &#183; -5s / +10s</span></div>
+      <div class="clip-card" id="clipCard2"><i>&#9654;</i>BRAKE_AHEAD_1741.mp4<span>15s &#183; keyframe-aligned, no re-encode</span></div>
+    </div>
+  </div>
+  <div class="rec-notes">
+    <div class="rec-note"><h3>Event clips, cut for you</h3><p>Qualifying events are extracted automatically as 15-second files, five seconds before the moment to ten after, named for what happened and listed in amber. The moments that matter never drown in hours of footage.</p></div>
+    <div class="rec-note"><h3>Screen or camera</h3><p>Tap REC for a clean camera recording that storage management never deletes. Long-press for interface capture with the full HUD, detections and alerts burned in.</p></div>
+    <div class="rec-note"><h3>DIM mode</h3><p>One tap blacks the screen while detection, alerts and recording keep running. Speed stays visible in white; a serious alert flashes the whole screen red five times with sound. Heat drops, battery lasts, night glare disappears.</p></div>
+  </div>
+</section>
+
+<!-- ============ OFFLINE / ZERO ============ -->
+<section id="offline">
+  <span class="eyebrow">Privacy by architecture</span>
+  <div class="zero num" id="zeroWrap">0</div>
+  <span class="zsub">BYTES OF DRIVE DATA LEAVE THE PHONE</span>
+  <p class="body-lg">Detection, tracking, decision, alerts, recording and the driving profile run with the network switched off: on-device inference means the co-pilot works in a tunnel, in the desert, in airplane mode. Maps and navigation run on OpenStreetMap with offline tile caching and no Google dependency. There is no account and no telemetry, and your footage lives in your own gallery.</p>
+  <div class="pipe-chips">
+    <span class="chip on">DETECT</span><span class="chip on">TRACK</span><span class="chip on">DECIDE</span>
+    <span class="chip on">RECORD</span><span class="chip on">PROFILE</span><span class="chip on">MAPS &#183; CACHED</span>
+    <span class="chip cloud">CLOUD</span>
+  </div>
+</section>
+
+<!-- ============ WHO IT'S FOR ============ -->
+<section id="drivers">
+  <div class="ind-pin" id="indPin">
+    <div class="ind-head">
+      <span class="eyebrow">Who it's for</span>
+      <h2 class="h2 h-display" style="font-size:clamp(34px,4.8vw,76px);line-height:1.06">
+        <span class="line"><em>You don't need a Tesla to</em></span>
+        <span class="line"><em>benefit from driver assistance.</em></span>
+      </h2>
+    </div>
+    <div class="ind-track" id="indTrack">
+      <div class="ind-card" data-i="1"><span class="glyph">&#8644;</span><span class="lbl">Daily Commuters</span><p class="why">Dense-traffic driving produces two accidents above all others: the cut-off and the rear-end. The crossing and brake advisories exist for exactly those.</p></div>
+      <div class="ind-card" data-i="2"><span class="glyph">&#9737;</span><span class="lbl">Parents of New Drivers</span><p class="why">The driving profile and the 7-day close-call count show how the car is really being driven, without lecturing anyone.</p></div>
+      <div class="ind-card" data-i="3"><span class="glyph">&#9210;</span><span class="lbl">Dashcam Buyers</span><p class="why">Recording with intelligence: the moments that matter are extracted automatically as named 15-second clips instead of being buried in hours of footage.</p></div>
+      <div class="ind-card" data-i="4"><span class="glyph">&#9789;</span><span class="lbl">Night and Long-Distance</span><p class="why">DIM mode keeps the co-pilot working behind a black screen, and the chunked recording architecture was made to survive long trips.</p></div>
+      <div class="ind-card" data-i="5"><span class="glyph">&#8862;</span><span class="lbl">Fleets, Later</span><p class="why">Profiles and event data per vehicle at phone cost per unit. On the roadmap after the consumer app proves itself, together with OBD engine data.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES PIN ============ -->
+<section id="features">
+  <div class="feat-pin" id="featPin">
+    <div class="feat-copy">
+      <span class="eyebrow">One screen</span>
+      <h2 class="h2 h-display" style="font-size:clamp(34px,4.6vw,72px)">
+        <span class="line"><em>Alerts, navigation, recording,</em></span>
+        <span class="line"><em>coaching. One screen.</em></span>
+      </h2>
+      <div class="feat-item active" data-feat="0">
+        <h3><span class="idx">A</span>Live Advisories</h3>
+        <p>Distinct sounds first, banner second, so your eyes can stay on the road. Each alert carries its measured values: time-to-contact, risk, crossing time. Alerts are deliberately rare, so when one fires you know it matters.</p>
+      </div>
+      <div class="feat-item" data-feat="1">
+        <h3><span class="idx">B</span>Speed Signs and Navigation</h3>
+        <p>Circular speed-limit signs are read on the fly and shown as the familiar red-ring badge, blinking past the limit. Search, route and automatic rerouting run on OpenStreetMap with cached tiles. There is no voice turn-by-turn on purpose: ADAS watches the road and leaves spoken directions to your maps app.</p>
+      </div>
+      <div class="feat-item" data-feat="2">
+        <h3><span class="idx">C</span>Clips, Already Cut</h3>
+        <p>The Clips tab holds anything worth rewatching, trimmed to 15 seconds and named for the event. Each clip carries an INFO sheet with every logged value and a plain verdict.</p>
+      </div>
+      <div class="feat-item" data-feat="3">
+        <h3><span class="idx">D</span>Your Driving Profile</h3>
+        <p>Every drive updates four dimensions: smoothness, anticipation, discipline and calm, plus an overall score, a named state, an ECO estimate and the close-call count. Anticipation weighs heaviest, as the dimension most predictive of trouble.</p>
+      </div>
+    </div>
+    <div class="feat-stage">
+      <div class="hudphone" id="featPhone">
+        <div class="hud" id="featHud">
+          <div class="hud-face is-active" data-face="0">
+            <svg class="scene" viewBox="0 0 1000 480" preserveAspectRatio="xMidYMid slice">
+              <rect width="1000" height="480" fill="url(#skyG)"/>
+              <rect y="210" width="1000" height="270" fill="#0e101b"/>
+              <polygon points="446,212 554,212 900,480 100,480" fill="url(#roadG)"/>
+              <line x1="446" y1="212" x2="100" y2="480" stroke="rgba(235,240,246,.35)" stroke-width="3"/>
+              <line x1="554" y1="212" x2="900" y2="480" stroke="rgba(235,240,246,.35)" stroke-width="3"/>
+              <line class="lane-move" x1="478" y1="212" x2="330" y2="480" stroke="rgba(235,240,246,.5)" stroke-width="5" stroke-dasharray="26 38"/>
+              <line class="lane-move" x1="522" y1="212" x2="670" y2="480" stroke="rgba(235,240,246,.5)" stroke-width="5" stroke-dasharray="26 38"/>
+              <polygon points="466,268 534,268 620,466 380,466" fill="url(#carpetGA)"/>
+              <g class="braking"><use href="#carRear" transform="translate(415,258) scale(1.45)"/></g>
+              <g stroke="#d9a05f"><use href="#brackets" transform="translate(410,252) scale(1.8,1.42)"/></g>
+              <g font-size="14" class="svglabel">
+                <rect x="400" y="222" width="200" height="21" rx="4" fill="rgba(8,8,18,.85)" stroke="#d9a05f" stroke-width="1"/>
+                <text x="500" y="237.5" text-anchor="middle" fill="#d9a05f">CAR 0.96 TTC 2.6S</text>
+              </g>
+              <polygon points="0,480 1000,480 1000,440 500,466 0,440" fill="#070812"/>
+            </svg>
+            <div class="hud-top">
+              <div class="hud-speed"><b>74</b><span>KM/H</span></div>
+              <div class="limit-badge">70</div>
+            </div>
+            <div class="hud-banner" style="opacity:1">CLOSING AHEAD TTC 2.6S RISK 53%</div>
+          </div>
+          <div class="hud-face face-map" data-face="1">
+            <div class="streets"></div>
+            <svg class="route" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M6 94 L6 60 Q6 52 14 52 L54 52 Q62 52 62 44 L62 14 L94 14" stroke="#8b9dc9" stroke-width="6" fill="none" stroke-linecap="round" style="filter:drop-shadow(0 0 8px rgba(139,157,201,.6))"/></svg>
+            <div class="carmk"></div>
+            <div class="eta">ROUTE <b>12.4 KM &#183; 19 MIN</b> &#183; RE-ROUTE AUTO</div>
+            <div class="off">TILES CACHED &#183; WORKS OFFLINE</div>
+            <div class="hud-top" style="justify-content:flex-end"><div class="limit-badge">50</div></div>
+          </div>
+          <div class="hud-face face-clips" data-face="2">
+            <div class="hd">CLIPS / DASHSIGHT</div>
+            <div class="cliprow ev">&#9654; CROSS_TRAFFIC_1732.mp4<span class="len">15S</span></div>
+            <div class="cliprow ev">&#9654; BRAKE_AHEAD_1741.mp4<span class="len">15S</span></div>
+            <div class="cliprow ev">&#9654; PEDESTRIAN_0918.mp4<span class="len">15S</span></div>
+            <div class="cliprow">&#9654; drive_full_0902.mp4<span class="len">5:00</span></div>
+            <div class="cliprow">&#9654; drive_full_0907.mp4<span class="len">5:00</span></div>
+          </div>
+          <div class="hud-face face-profile" data-face="3">
+            <div class="state">SMOOTH</div>
+            <div class="sc">SCORE 81 &#183; ECO 76 &#183; CLOSE CALLS 7D: 2</div>
+            <div class="dim"><div class="lb">SMOOTHNESS<b>82</b></div><div class="bar"><i data-w="82%"></i></div></div>
+            <div class="dim"><div class="lb">ANTICIPATION<b>74</b></div><div class="bar"><i data-w="74%"></i></div></div>
+            <div class="dim"><div class="lb">DISCIPLINE<b>88</b></div><div class="bar"><i data-w="88%"></i></div></div>
+            <div class="dim"><div class="lb">CALM<b>79</b></div><div class="bar"><i data-w="79%"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ALERT CATALOG ============ -->
+<section id="alerts">
+  <span class="eyebrow">The alert catalog</span>
+  <h2 class="h2 h-display">
+    <span class="line"><em>Every alert is based on measured</em></span>
+    <span class="line"><em>motion, and rare enough to stay trusted.</em></span>
+  </h2>
+  <p class="body-lg" style="max-width:620px">Calibrated on real Tunis traffic and recalibrated from a logged field audit. Per-track cooldowns keep any alert from repeating itself into noise, and a sensitivity setting lets you scale the margins to your own driving.</p>
+  <div class="al-rows">
+    <div class="al-row" data-dir="-1">
+      <div class="al-card"><div class="nm">FORWARD CLOSING</div><p>A vehicle in your lane approached too fast. Fires on an honest time-to-contact gate with two confirming passes, <b>tone plus banner with TTC and risk</b>.</p></div>
+      <div class="al-card"><div class="nm crit">CROSS TRAFFIC</div><p>A car cutting across your path, predicted from its sideways motion before it arrives. <b>Four fast urgent tones</b> and a side arrow.</p></div>
+      <div class="al-card"><div class="nm crit">BRAKE AHEAD</div><p>Brake lights ahead while the car stands inside your projected stopping zone. <b>Six short beeps and a double red screen flash.</b></p></div>
+      <div class="al-card"><div class="nm">PEDESTRIAN CROSSING</div><p>A person stepping toward the road, caught before entering the lane. <b>Double high tone.</b></p></div>
+    </div>
+    <div class="al-row" data-dir="1">
+      <div class="al-card"><div class="nm">CUT-IN</div><p>A vehicle slides from the neighbor lane into yours while close. <b>Tone and banner.</b></p></div>
+      <div class="al-card"><div class="nm crit">RED LIGHT</div><p>A red light ahead while the car is not decelerating. <b>Double error tone.</b></p></div>
+      <div class="al-card"><div class="nm">CYCLIST PROXIMITY</div><p>A bicycle close by, with its own distinct tone, because two-wheelers deserve their own margin.</p></div>
+      <div class="al-card"><div class="nm soft">OVERSPEED &#183; DRIFT &#183; HARD BRAKE</div><p>Logged quietly rather than beeped: the badge blinks past the limit, and the rest goes to the post-drive debrief.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="faq-marq"><div class="mtrack" id="faqMarq">
+    <span>Questions?</span><span>Questions?</span><span>Questions?</span><span>Questions?</span><span>Questions?</span><span>Questions?</span>
+  </div></div>
+  <div class="faq-body">
+    <div class="faq-intro">
+      <p class="body-lg">Straight answers, including the limits.</p>
+      <a class="btn" href="#cta">Join the Closed Beta</a>
+    </div>
+    <div class="acc">
+      <div class="acc-item open">
+        <button class="acc-q">Will it cook my phone in summer?<span class="plus">+</span></button>
+        <div class="acc-a"><p>Heat was treated as a core design constraint. The app reduces its own load early and tells you when it does; recording pauses only at severe temperatures, and DIM mode cuts the biggest heat source, the screen itself. Pointing the air conditioning toward the windshield handles the rest. In extreme ambient heat the app slows down gracefully and says so on screen.</p></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q">Does it need internet?<span class="plus">+</span></button>
+        <div class="acc-a"><p>The co-pilot itself, never: detection, alerts, recording and the profile run entirely on the phone, even in airplane mode. Maps use OpenStreetMap with offline tile caching, and route search runs on free services with no account attached to you.</p></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q">Is my driving data uploaded somewhere?<span class="plus">+</span></button>
+        <div class="acc-a"><p>No. Every frame is analyzed on the phone and discarded. No account, no cloud, no telemetry. Recordings live in your own gallery, and drive data never leaves the device.</p></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q">Can I trust the alerts?<span class="plus">+</span></button>
+        <div class="acc-a"><p>The alert set was calibrated on logged field data specifically to be rare and meaningful, and every alert can be reviewed afterward in the debrief with the exact values it measured. Alerts can still be late or absent: low light, heavy rain, glare and extreme heat degrade perception, and the screen tells you when that happens.</p></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q">Will it drain my battery?<span class="plus">+</span></button>
+        <div class="acc-a"><p>Running computer vision does consume power. A full battery lasts roughly four hours under load; a charger is recommended for long trips, and the app warns before starting a recording on battery.</p></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q">Does it replace my car's safety systems?<span class="plus">+</span></button>
+        <div class="acc-a"><p>Never. ADAS only advises: it holds no certification, it cannot brake or steer, and it guarantees nothing. If your car already has certified assistance, keep using it. This app exists for the millions of cars that will never get it.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER CTA ============ -->
+<section id="cta">
+  <div class="inner">
+    <div>
+      <h2 class="h2 h-display">
+        <span class="line"><em>Drive With a</em></span>
+        <span class="line"><em>Second Pair of Eyes</em></span>
+      </h2>
+      <p class="body-lg" style="max-width:460px">The closed beta is forming now: daily drivers wanted for the Google Play track. Install, mount, calibrate once, drive. Your feedback ships in days, not quarters.</p>
+      <div class="stores">
+        <a class="btn" href="#">&#9654; Join on Google Play</a>
+        <a class="btn ghost" href="#">Read the Technical Docs</a>
+      </div>
+    </div>
+    <div class="qr-wrap">
+      <a class="qr" href="https://www.youtube.com/@ADAS_AI_233/videos" target="_blank" rel="noopener">
+        <img src="media/qr-youtube.png" alt="QR code linking to the PolstarAI YouTube channel">
+      </a>
+      <p>Scan to see real footage of the app<br>working on the road.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a class="logo" href="#top"><span class="mark"></span>ADAS<small>BY POLSTARAI</small></a>
+  <div class="cols">
+    <div class="col"><a href="#top">Home</a><a href="#vision">Vision Stack</a><a href="#alerts">Alerts</a><a href="#cta">Beta</a></div>
+    <div class="col"><a href="#faq">Support</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
+    <div class="col"><a href="#">PolstarAI</a><a href="#">Contact</a></div>
+  </div>
+  <div class="fine">
+    <span style="max-width:720px">An advisory application for personal use. Not a certified Advanced Driver Assistance System, not a collision avoidance system, and no substitute for attentive driving. All drive data stays on the device.</span>
+    <span>&copy; 2026 PolstarAI, Tunis</span>
+  </div>
+</footer>
+</main>
+
+<script type="importmap">{"imports":{"three":"./media/3d/vendor/three.module.min.js"}}</script>
+<script src="media/vendor/gsap.min.js"></script>
+<script src="media/vendor/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { g:'#5fc998', a:'#d9a05f', r:'#ef5a50' };
+
+/* ================= preloader ================= */
+const loader = document.getElementById('loader');
+document.body.style.overflow = 'hidden';
+window.scrollTo(0, 0);
+const introTl = gsap.timeline({ onComplete: () => { loader.style.display = 'none'; document.body.style.overflow = ''; } });
+if (reduceMotion) {
+  loader.style.display = 'none'; document.body.style.overflow = '';
+  gsap.set('.hero h1 .line em, .h2 .line em', { y: 0 });
+} else {
+  introTl
+    .to('#loaderScan', { opacity: 1, scaleX: 1, duration: .8, ease: 'power3.out' }, 0)
+    .to('#loaderScan', { top: '80%', duration: 2.0, ease: 'power2.inOut' }, .4)
+    .to('.loader-title .line em', { y: 0, duration: .9, ease: 'power4.out', stagger: .12 }, .2)
+    .to('[data-strip="h"]', { yPercent: -80, duration: 2.0, ease: 'power3.inOut' }, .3)
+    .to('[data-strip="t"]', { yPercent: -80, duration: 1.7, ease: 'power3.inOut' }, .3)
+    .to('[data-strip="u"]', { yPercent: -80, duration: 1.9, ease: 'power3.inOut' }, .3)
+    .to('.loader-title .line em', { y: '-110%', duration: .6, ease: 'power3.in', stagger: .06 }, 2.4)
+    .to('#loaderScan', { opacity: 0, duration: .3 }, 2.5)
+    .to(loader, { yPercent: -100, duration: .9, ease: 'power4.inOut' }, 2.8)
+    .to('.hero h1 .line em', { y: 0, duration: 1.1, ease: 'power4.out', stagger: .14 }, 3.0)
+    .from('.hero-sub', { y: 40, opacity: 0, duration: .9, ease: 'power3.out' }, 3.3)
+    .from('.hero-disclaimer', { y: 24, opacity: 0, duration: .8, ease: 'power3.out' }, 3.45);
+}
+
+/* ================= hero background video ================= */
+(() => {
+  const wrap = document.querySelector('.hero-video');
+  const vid = document.getElementById('heroVideo');
+  if (!vid) return;
+  const showPosterOnly = () => {
+    vid.remove();
+    const p = document.createElement('div');
+    p.className = 'poster-fallback';
+    wrap.appendChild(p);
+  };
+  if (reduceMotion) { showPosterOnly(); return; }
+  /* tier selection: connection first, then viewport */
+  const conn = navigator.connection || {};
+  const slow = conn.saveData || (conn.downlink && conn.downlink < 1.5) || /2g/.test(conn.effectiveType || '');
+  const w = Math.max(innerWidth, innerHeight); /* landscape phones count as wide */
+  const tier = slow ? '720' : w >= 850 ? '1080' : '720';
+  vid.preload = 'auto';
+  vid.src = 'media/hero-' + tier + '.mp4';
+  vid.addEventListener('canplay', () => vid.classList.add('ready'), { once: true });
+  vid.addEventListener('error', showPosterOnly, { once: true });
+  const tryPlay = () => { const p = vid.play(); if (p) p.catch(() => {}); };
+  /* play only while the hero is on screen */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => e.isIntersecting ? tryPlay() : vid.pause());
+  }, { threshold: .05 });
+  io.observe(wrap);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) vid.pause();
+    else if (wrap.getBoundingClientRect().bottom > 0) tryPlay();
+  });
+})();
+
+/* ================= hero video scroll pan (sky -> traffic) ================= */
+(() => {
+  const vid = document.getElementById('heroVideo');
+  if (!vid || reduceMotion) return;
+  gsap.to(vid, { objectPosition: '50% 100%', ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom 35%', scrub: true } });
+})();
+
+/* ================= witness section reveal ================= */
+gsap.from('#heroHud', { y: 110, opacity: 0, duration: 1.1, ease: 'power3.out',
+  scrollTrigger: { trigger: '#witness', start: 'top 75%' } });
+gsap.from('.phone-caption', { y: 26, opacity: 0, duration: .8, ease: 'power3.out',
+  scrollTrigger: { trigger: '#witness', start: 'top 65%' } });
+
+/* ================= phone demo video ================= */
+(() => {
+  const v = document.getElementById('phoneDemo');
+  if (!v) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { const pr = v.play(); if (pr) pr.catch(() => {}); }
+    else v.pause();
+  }), { threshold: .2 });
+  io.observe(v);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) v.pause(); });
+})();
+
+/* ================= nav ================= */
+ScrollTrigger.create({
+  start: 80,
+  onUpdate: self => document.getElementById('nav').classList.toggle('scrolled', self.scroll() > 80)
+});
+
+/* ================= shared reveals ================= */
+document.querySelectorAll('.h2').forEach(h => {
+  gsap.to(h.querySelectorAll('.line em'), {
+    y: 0, duration: 1, ease: 'power4.out', stagger: .1,
+    scrollTrigger: { trigger: h, start: 'top 82%' }
+  });
+});
+gsap.utils.toArray('section .body-lg, .eyebrow, .rec-note, .tuned').forEach(el => {
+  gsap.from(el, { y: 30, opacity: 0, duration: .9, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 88%' } });
+});
+if (!reduceMotion) gsap.to('#marq1', { xPercent: -50, duration: 26, ease: 'none', repeat: -1 });
+
+/* ================= vision stack pinned scrub ================= */
+(() => {
+  const steps = gsap.utils.toArray('.vis-copy .step');
+  const layers = ['#visL1', '#visL2', '#visL3'].map(s => document.querySelector(s));
+  const tag = document.getElementById('visLayerTag');
+  const names = ['<b>LAYER 1</b> / DETECTION &#183; YOLO11N', '<b>LAYER 2</b> / TRACKING &#183; IOU', '<b>LAYER 3</b> / DECISION &#183; EVENTENGINE'];
+  ScrollTrigger.create({
+    trigger: '#visPin', start: 'top top', end: '+=200%',
+    pin: true, scrub: .5, invalidateOnRefresh: true,
+    onUpdate: self => {
+      const idx = Math.min(2, Math.floor(self.progress * 3));
+      steps.forEach((s, k) => s.classList.toggle('active', k === idx));
+      layers.forEach((l, k) => gsap.to(l, { opacity: k === idx ? 1 : 0, duration: .35, overwrite: true }));
+      if (tag.dataset.cur != idx) { tag.dataset.cur = idx; tag.innerHTML = names[idx]; }
+    }
+  });
+})();
+
+/* ================= prediction diagram ================= */
+(() => {
+  const cc = { x: 0 };
+  const apply = () => gsap.set('#crossCar', { attr: { transform: `translate(${cc.x},0)` } });
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: '#predDiagram', start: 'top 65%' },
+    defaults: { ease: 'power2.inOut' }
+  });
+  tl.from('#crossCar', { opacity: 0, duration: .5 })
+    .to(cc, { x: 60, duration: 1.0, onUpdate: apply }, 0)
+    .to('#vxLbl', { opacity: 1, duration: .3 })
+    .to('#predLine', { opacity: 1, duration: .4 }, '+=.2')
+    .to('#predPoint', { opacity: 1, duration: .3 })
+    .to('#predLbl', { opacity: 1, duration: .3 })
+    .to('#predAlert', { opacity: 1, duration: .4, ease: 'back.out(1.6)' }, '+=.25')
+    .to(cc, { x: 175, duration: 1.6, ease: 'power1.inOut', onUpdate: apply }, '<');
+  if (!reduceMotion) gsap.to('#predAlert', {
+    opacity: .55, duration: .5, yoyo: true, repeat: -1, ease: 'sine.inOut',
+    scrollTrigger: { trigger: '#predDiagram', start: 'top 65%' }, delay: 3.5
+  });
+})();
+
+/* ================= braking carpet scrub ================= */
+(() => {
+  const steps = gsap.utils.toArray('.carpet-copy .step');
+  const stage = document.querySelector('.carpet-stage');
+  const poly = document.getElementById('bigCarpetPoly');
+  const edge = document.getElementById('bigCarpetEdge');
+  const meters = document.getElementById('bigMeters');
+  const spd = document.getElementById('carpetSpeed');
+  const dist = document.getElementById('carpetDist');
+  const state = document.getElementById('carpetState');
+  const leadG = document.getElementById('carpetLeadG');
+  const leadBr = document.getElementById('carpetLeadBr');
+  const tag = document.getElementById('carpetLeadTag');
+  const tagBox = document.getElementById('carpetTagBox');
+  const stop = v => Math.max(12, Math.round(v / 3.6 * 1.2 + (v / 3.6) ** 2 / (2 * 6.5)));
+  const grades = [
+    { at: 0.00, hex: C.g, fill: 'url(#cgG)', st: 'CLEAR', ttc: 'CAR TTC 5.2S' },
+    { at: 0.45, hex: C.a, fill: 'url(#cgA)', st: 'LEAD INSIDE ZONE', ttc: 'CAR TTC 3.1S' },
+    { at: 0.78, hex: C.r, fill: 'url(#cgR)', st: 'BRAKE ADVISORY', ttc: 'CAR BRK TTC 1.8S' }
+  ];
+  ScrollTrigger.create({
+    trigger: '#carpetPin', start: 'top top', end: '+=220%',
+    pin: true, scrub: .6, invalidateOnRefresh: true,
+    onUpdate: self => {
+      const p = self.progress;
+      window.__carpetP = p;
+      const v = Math.round(28 + p * 82);
+      const d = stop(v);
+      spd.textContent = v;
+      dist.textContent = 'STOPPING DISTANCE ' + d + ' M';
+      meters.textContent = 'STOP ZONE ' + d + ' M';
+      if (!window.__has3d) {
+        const topY = 330 - p * 74, topH = 22 + p * 20, botH = 110 + p * 34;
+        poly.setAttribute('points', `${450 - topH},${topY} ${450 + topH},${topY} ${450 + botH},548 ${450 - botH},548`);
+        edge.setAttribute('x1', 450 - topH); edge.setAttribute('x2', 450 + topH);
+        edge.setAttribute('y1', topY); edge.setAttribute('y2', topY);
+        const s = .78 + p * .74;
+        const carBottom = topY + p * 96;
+        leadG.setAttribute('transform', `translate(${450 - 60 * s},${carBottom - 92 * s}) scale(${s})`);
+      }
+      let g = grades[0];
+      for (const gr of grades) if (p >= gr.at) g = gr;
+      poly.setAttribute('fill', g.fill);
+      edge.setAttribute('stroke', g.hex); meters.setAttribute('fill', g.hex);
+      leadBr.setAttribute('stroke', g.hex); tag.setAttribute('fill', g.hex); tagBox.setAttribute('stroke', g.hex);
+      tag.textContent = g.ttc;
+      stage.style.setProperty('--cstate', g.hex);
+      state.textContent = g.st; state.style.borderColor = g.hex; state.style.color = g.hex;
+      leadG.classList.toggle('braking', p >= grades[2].at);
+      document.getElementById('brakeSign').classList.toggle('on', p >= grades[2].at);
+      if (window.__has3d) {
+        document.querySelectorAll('#arOverlay .arbr').forEach(el => el.setAttribute('stroke', g.hex));
+        const tb = document.getElementById('arTagBox'), tt = document.getElementById('arTagText');
+        tb.setAttribute('stroke', g.hex); tt.setAttribute('fill', g.hex); tt.textContent = g.ttc;
+        if (window.__scene3d) window.__scene3d.update(p);
+      }
+      document.querySelectorAll('#carpetScene .lane-move').forEach(l => l.classList.toggle('fast', p > .5));
+      const idx = p < grades[1].at ? 0 : p < grades[2].at ? 1 : 2;
+      steps.forEach((st2, k) => st2.classList.toggle('active', k === idx));
+    }
+  });
+})();
+
+/* ================= recording clip cards ================= */
+(() => {
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: '#recTimeline', start: 'top 72%' },
+    defaults: { ease: 'power2.out' }
+  });
+  tl.to('#clipCard1', { opacity: 1, y: 0, duration: .6, delay: .6 })
+    .to('#clipCard2', { opacity: 1, y: 0, duration: .6 }, '-=.35');
+})();
+
+/* ================= zero reveal ================= */
+gsap.from('#zeroWrap', {
+  scale: .7, opacity: 0, duration: 1.1, ease: 'power3.out',
+  scrollTrigger: { trigger: '#offline', start: 'top 65%' }
+});
+gsap.from('.pipe-chips .chip', {
+  y: 24, opacity: 0, duration: .6, stagger: .07, ease: 'power3.out',
+  scrollTrigger: { trigger: '.pipe-chips', start: 'top 90%' }
+});
+
+/* ================= drivers horizontal ================= */
+(() => {
+  const track = document.getElementById('indTrack');
+  const getDist = () => Math.max(0, track.scrollWidth - innerWidth + innerWidth * .04);
+  gsap.to(track, {
+    x: () => -getDist(), ease: 'none',
+    scrollTrigger: { trigger: '#indPin', start: 'top top', end: () => '+=' + getDist(),
+      pin: true, scrub: 1, invalidateOnRefresh: true }
+  });
+  gsap.from('.ind-card', {
+    y: 80, opacity: 0, duration: .8, ease: 'power3.out', stagger: .08,
+    scrollTrigger: { trigger: '#indPin', start: 'top 55%' }
+  });
+})();
+
+/* ================= features faces ================= */
+(() => {
+  const items = gsap.utils.toArray('.feat-item');
+  const hud = document.getElementById('featHud');
+  function showFace(idx) {
+    hud.querySelectorAll('.hud-face').forEach(f => {
+      const active = +f.dataset.face === idx;
+      gsap.to(f, { opacity: active ? 1 : 0, duration: .45, ease: 'power2.out', overwrite: true });
+      f.classList.toggle('is-active', active);
+      if (active && f.classList.contains('face-profile')) {
+        f.querySelectorAll('.dim .bar i').forEach(b =>
+          gsap.fromTo(b, { width: 0 }, { width: b.dataset.w, duration: .9, ease: 'power3.out', delay: .15 }));
+      }
+    });
+  }
+  ScrollTrigger.create({
+    trigger: '#featPin', start: 'top top',
+    end: () => '+=' + items.length * innerHeight * .7,
+    pin: true, scrub: true, invalidateOnRefresh: true,
+    onUpdate: self => {
+      const idx = Math.min(items.length - 1, Math.floor(self.progress * items.length));
+      items.forEach((it, k) => it.classList.toggle('active', k === idx));
+      if (hud.dataset.cur != idx) { hud.dataset.cur = idx; showFace(idx); }
+    }
+  });
+})();
+
+/* ================= alert rows drift ================= */
+gsap.utils.toArray('.al-row').forEach(row => {
+  const dir = +row.dataset.dir;
+  row.innerHTML += row.innerHTML;
+  gsap.set(row, { x: dir === 1 ? -row.scrollWidth / 4 : 0 });
+  gsap.to(row, {
+    x: dir === 1 ? 0 : -row.scrollWidth / 4, ease: 'none',
+    scrollTrigger: { trigger: '#alerts', start: 'top bottom', end: 'bottom top', scrub: 1.2 }
+  });
+});
+
+/* ================= FAQ ================= */
+if (!reduceMotion) gsap.to('#faqMarq', { xPercent: -50, duration: 30, ease: 'none', repeat: -1 });
+document.querySelectorAll('.acc-item').forEach(item => {
+  const q = item.querySelector('.acc-q');
+  const a = item.querySelector('.acc-a');
+  if (item.classList.contains('open')) gsap.set(a, { height: 'auto' });
+  q.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.acc-item.open').forEach(o => {
+      if (o !== item) {
+        o.classList.remove('open');
+        gsap.to(o.querySelector('.acc-a'), { height: 0, duration: .45, ease: 'power3.inOut' });
+      }
+    });
+    item.classList.toggle('open', !isOpen);
+    gsap.to(a, { height: isOpen ? 0 : 'auto', duration: .5, ease: 'power3.inOut' });
+  });
+});
+
+/* ================= 3D scene lazy boot ================= */
+(() => {
+  const stage = document.querySelector('.carpet-stage');
+  if (!stage || reduceMotion || innerWidth < 900) return;
+  try {
+    const t = document.createElement('canvas');
+    if (!(t.getContext('webgl2') || t.getContext('webgl'))) return;
+  } catch (e) { return; }
+  let booted = false;
+  new IntersectionObserver((es, io) => {
+    if (!es[0].isIntersecting || booted) return;
+    booted = true; io.disconnect();
+    const chip = document.createElement('div');
+    chip.className = 'gl3d-chip'; chip.textContent = 'LOADING 3D SCENE';
+    stage.appendChild(chip);
+    import('./media/3d/scene3d.js').then(m => m.init(stage, {
+      carpet: document.getElementById('bigCarpetPoly'),
+      edge: document.getElementById('bigCarpetEdge'),
+      meters: document.getElementById('bigMeters'),
+      br: Array.from(document.querySelectorAll('#arOverlay .arbr')),
+      tagBox: document.getElementById('arTagBox'),
+      tagText: document.getElementById('arTagText'),
+    })).then(api => {
+      window.__scene3d = api; window.__has3d = true;
+      stage.classList.add('has3d');
+      document.getElementById('arOverlay').style.display = '';
+      chip.remove();
+      api.update(window.__carpetP || 0);
+      ScrollTrigger.refresh();
+    }).catch(err => { console.warn('3D scene unavailable, SVG fallback active:', err); chip.remove(); });
+  }, { rootMargin: '600px' }).observe(stage);
+})();
+
+/* ================= cut-off 3D lazy boot ================= */
+(() => {
+  const stage = document.getElementById('predDiagram');
+  if (!stage || reduceMotion || innerWidth < 900) return;
+  try {
+    const t = document.createElement('canvas');
+    if (!(t.getContext('webgl2') || t.getContext('webgl'))) return;
+  } catch (e) { return; }
+  let booted = false;
+  new IntersectionObserver((es, io) => {
+    if (!es[0].isIntersecting || booted) return;
+    booted = true; io.disconnect();
+    import('./media/3d/cutoff3d.js').then(m => m.init(stage)).then(() => {
+      stage.classList.add('has3d');
+    }).catch(err => { console.warn('cut-off 3D unavailable, SVG diagram active:', err); });
+  }, { rootMargin: '400px' }).observe(stage);
+})();
+
+/* ================= anchors ================= */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+window.addEventListener('load', () => ScrollTrigger.refresh());
+</script>
+<script type="module">
+/* ============ WebGL aurora background + 3D recording loop ============ */
+import * as THREE from 'three';
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- aurora shader on the fixed background canvas ---------- */
+(() => {
+  const canvas = document.getElementById('bgfx');
+  if (!canvas) return;
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false }); }
+  catch (e) { return; }
+  renderer.setPixelRatio(0.66);   /* background wash: low res is invisible and cheap */
+  const scene = new THREE.Scene();
+  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const uni = { uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
+  const mat = new THREE.ShaderMaterial({
+    uniforms: uni,
+    vertexShader: 'void main(){gl_Position=vec4(position,1.0);}',
+    fragmentShader: `
+      uniform float uTime; uniform vec2 uRes;
+      float blob(vec2 uv, vec2 c, float r){ float d=length(uv-c); return smoothstep(r,0.0,d); }
+      void main(){
+        vec2 uv = gl_FragCoord.xy/uRes.xy;              /* uv.y: 0 bottom, 1 top */
+        float t = uTime*0.05;
+        /* the hero sky, abstracted: deep violet up top melting into a warm
+           ember glow at the bottom of the viewport, drifting very slowly */
+        vec3 top    = vec3(0.050,0.038,0.100);          /* deep violet */
+        vec3 mid    = vec3(0.085,0.052,0.120);          /* plum */
+        vec3 low    = vec3(0.130,0.070,0.055);          /* dim ember */
+        float h = uv.y + 0.05*sin(t*0.8 + uv.x*2.0);    /* slow horizon drift */
+        vec3 col = mix(low, mid, smoothstep(0.0, 0.55, h));
+        col = mix(col, top, smoothstep(0.50, 1.0, h));
+        vec2 ar = vec2(uv.x*uRes.x/uRes.y, uv.y);
+        vec2 c1 = vec2(0.5*uRes.x/uRes.y + 0.30*sin(t*0.5), 0.0);
+        col += vec3(0.150,0.075,0.035)*blob(ar,c1,0.90)*0.40;       /* sun ember, wide + soft */
+        vec2 c2 = vec2(0.5*uRes.x/uRes.y + 0.35*cos(t*0.4+2.0), 1.0);
+        col += vec3(0.060,0.040,0.140)*blob(ar,c2,0.90)*0.50;       /* violet crown */
+        float g = fract(sin(dot(uv,vec2(12.9898,78.233)))*43758.5453);
+        col += (g-0.5)*0.012;
+        gl_FragColor = vec4(col,1.0);
+      }`
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+  const resize = () => {
+    renderer.setSize(innerWidth, innerHeight, false);
+    uni.uRes.value.set(innerWidth * Math.min(devicePixelRatio, 1.5), innerHeight * Math.min(devicePixelRatio, 1.5));
+  };
+  resize(); addEventListener('resize', resize);
+  const clock = new THREE.Clock();
+  let raf, lastA = 0;
+  const tick = (ts) => {
+    raf = requestAnimationFrame(tick);
+    if (ts && ts - lastA < 50) return;               /* 20 fps is plenty for a slow wash */
+    lastA = ts || 0;
+    uni.uTime.value = clock.getElapsedTime(); renderer.render(scene, cam);
+  };
+  if (reduce) { uni.uTime.value = 10; renderer.render(scene, cam); return; }
+  tick();
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf); else tick();
+  });
+})();
+
+</script>
+</body>
+</html>
